@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Voice Memo Transcriber</title>
+<style>
+:root{
+  --bg:#f6f6f4; --panel:#fff; --text:#1c1c1a; --muted:#6b6b66;
+  --border:#e2e2dd; --accent:#c15f3c; --accent-soft:#fdf1ec;
+  --ok:#2f7a52; --err:#b3413a; --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#17171a; --panel:#212125; --text:#ececea; --muted:#9a9a95;
+         --border:#33333a; --accent:#e08762; --accent-soft:#2c211d; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  line-height:1.7;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 80px}
+h1{font-size:1.35rem;margin:0 0 4px;letter-spacing:.01em}
+.sub{color:var(--muted);font-size:.85rem;margin:0 0 22px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
+
+/* ---- レイアウト（サイドバー + 本体） ---- */
+.app{display:flex;gap:26px;align-items:flex-start}
+.side{width:212px;flex:none;position:sticky;top:20px}
+.main{flex:1;min-width:0}
+
+.sidehead{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:0 4px}
+.sidehead h2{font-size:.76rem;margin:0;flex:1;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;
+  font-size:.86rem;cursor:pointer;border:1px solid transparent;user-select:none}
+.nav-item:hover{background:var(--panel)}
+.nav-item.active{background:var(--panel);border-color:var(--border);font-weight:600}
+.nav-item.drop-hot{border-color:var(--accent);background:var(--accent-soft)}
+.nav-item .label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-item .n{color:var(--muted);font-size:.76rem;flex:none}
+.nav-item .kill{color:var(--muted);font-size:.9rem;line-height:1;padding:0 2px;
+  border:0;background:none;cursor:pointer;visibility:hidden;flex:none}
+.nav-item:hover .kill{visibility:visible}
+.nav-item .kill:hover{color:var(--err)}
+.nav-sep{height:1px;background:var(--border);margin:8px 4px}
+#new-project{width:100%;text-align:left;color:var(--muted);border-style:dashed}
+
+/* ---- アップロード ---- */
+#drop{border:2px dashed var(--border);border-radius:var(--radius);background:var(--panel);
+  padding:34px 20px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:16px}
+#drop.hot{border-color:var(--accent);background:var(--accent-soft)}
+#drop .big{font-size:1.05rem;font-weight:600;margin-bottom:6px}
+#drop .small{color:var(--muted);font-size:.82rem}
+input[type=file]{display:none}
+
+details{margin-bottom:16px}
+summary{cursor:pointer;color:var(--muted);font-size:.85rem;padding:6px 2px;user-select:none}
+label.row{display:flex;align-items:flex-start;gap:9px;margin:12px 0;font-size:.88rem;cursor:pointer}
+label.row input{margin-top:5px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+label.row .hint{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
+textarea{width:100%;min-height:96px;background:var(--bg);color:var(--text);
+  border:1px solid var(--border);border-radius:10px;padding:11px;font-size:.88rem;
+  font-family:inherit;line-height:1.6;resize:vertical}
+.fieldlabel{font-size:.85rem;font-weight:600;margin:14px 0 6px}
+.fieldhint{color:var(--muted);font-size:.78rem;margin:0 0 8px}
+
+/* ---- 進行中のジョブ ---- */
+.job{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.job h3{margin:0 0 2px;font-size:.95rem;word-break:break-all}
+.job .meta{color:var(--muted);font-size:.78rem;margin-bottom:10px}
+.bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin:10px 0}
+.bar>span{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.bar.indet>span{width:35%;animation:slide 1.3s ease-in-out infinite}
+@keyframes slide{0%{margin-left:-35%}100%{margin-left:100%}}
+.status{font-size:.84rem;color:var(--muted)}
+.status.err{color:var(--err)}
+.status.ok{color:var(--ok)}
+.warn{background:var(--accent-soft);border:1px solid var(--border);border-radius:9px;
+  padding:9px 11px;font-size:.8rem;margin:10px 0}
+.result{white-space:pre-wrap;background:var(--bg);border:1px solid var(--border);
+  border-radius:10px;padding:14px;margin-top:12px;max-height:440px;overflow:auto;
+  font-size:.92rem;-webkit-user-select:text;user-select:text}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+button,a.btn{font:inherit;font-size:.85rem;padding:8px 15px;border-radius:9px;
+  border:1px solid var(--border);background:var(--panel);color:var(--text);
+  cursor:pointer;text-decoration:none;display:inline-block}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.quiet{padding:6px 12px;font-size:.8rem}
+button.danger{color:var(--err)}
+button:active{opacity:.7}
+select{font:inherit;font-size:.85rem;padding:7px 10px;border-radius:9px;
+  border:1px solid var(--border);background:var(--panel);color:var(--text)}
+#banner{display:none;background:var(--accent-soft);border:1px solid var(--accent);
+  border-radius:10px;padding:11px 13px;font-size:.84rem;margin-bottom:16px}
+#banner.err{border-color:var(--err);color:var(--err)}
+
+/* ---- 保存済みの文字起こし ---- */
+.hist{margin-top:30px;border-top:1px solid var(--border);padding-top:20px}
+.histhead{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.histhead h2{font-size:1rem;margin:0;flex:1}
+.histhead .count{color:var(--muted);font-size:.78rem}
+.hitem{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:10px;overflow:hidden}
+.hitem.dragging{opacity:.45}
+.hitem>.head{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer}
+.hitem>.head:hover{background:var(--accent-soft)}
+.hitem .grip{color:var(--muted);font-size:.8rem;flex:none;cursor:grab}
+.hitem .caret{color:var(--muted);font-size:.62rem;flex:none;transition:transform .15s}
+.hitem.open .caret{transform:rotate(90deg)}
+.hitem .title{flex:1;font-size:.92rem;font-weight:600;word-break:break-all}
+.hitem .chip{font-size:.72rem;color:var(--muted);border:1px solid var(--border);
+  border-radius:99px;padding:1px 9px;white-space:nowrap;flex:none}
+.hitem .when{color:var(--muted);font-size:.76rem;white-space:nowrap;flex:none}
+.hitem .body{display:none;padding:0 15px 15px}
+.hitem.open .body{display:block}
+.empty{color:var(--muted);font-size:.85rem;padding:4px 2px}
+
+@media (max-width:760px){
+  .app{flex-direction:column;gap:14px}
+  .side{width:100%;position:static}
+  .nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px}
+  .nav-item{flex:none;border-color:var(--border);background:var(--panel)}
+  .nav-item .kill{visibility:visible}
+  .nav-sep{display:none}
+  #new-project{width:auto}
+  .hitem .grip{display:none}
+  .hitem .when{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Voice Memo Transcriber</h1>
+  <p class="sub">Drop in an iPhone voice memo and get the Japanese text back.</p>
+
+  <div id="banner"></div>
+
+  <div class="app">
+    <aside class="side">
+      <div class="sidehead"><h2>Library</h2></div>
+      <div class="nav" id="nav"></div>
+      <button class="quiet" id="new-project">+ New project</button>
+    </aside>
+
+    <div class="main">
+      <div id="drop">
+        <div class="big">Choose an audio file</div>
+        <div class="small">Tap to pick from Files, or drag and drop on a computer<br>m4a, mp3, wav, aac and more</div>
+      </div>
+      <input type="file" id="picker" accept="audio/*,video/*,.m4a,.mp3,.wav,.aac,.caf" multiple>
+
+      <details id="opts">
+        <summary>Options (glossary and proofreading)</summary>
+        <div class="panel">
+          <div class="fieldlabel">Glossary</div>
+          <p class="fieldhint">List names, course titles and technical terms one per line. This cuts misrecognized words dramatically, and is remembered for next time.</p>
+          <textarea id="glossary" placeholder="UCLA&#10;ガウシアンスプラッティング&#10;金属有機構造体"></textarea>
+
+          <label class="row">
+            <input type="checkbox" id="polish" checked>
+            <span>Proofread with Claude
+              <span class="hint">Fixes homophone errors and punctuation. It never summarizes.</span></span>
+          </label>
+          <label class="row">
+            <input type="checkbox" id="fillers">
+            <span>Remove fillers
+              <span class="hint">Strips hesitations such as “えー” and “あのー”. Leave it off to keep speech exactly as spoken.</span></span>
+          </label>
+        </div>
+      </details>
+
+      <div id="jobs"></div>
+
+      <section class="hist">
+        <div class="histhead">
+          <h2 id="hist-title">All transcripts</h2>
+          <span class="count" id="hist-count"></span>
+          <button class="quiet" id="hist-reload">Refresh</button>
+        </div>
+        <div id="hist-list"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const drop = document.getElementById('drop');
+const picker = document.getElementById('picker');
+const jobsEl = document.getElementById('jobs');
+const glossaryEl = document.getElementById('glossary');
+const polishEl = document.getElementById('polish');
+const fillersEl = document.getElementById('fillers');
+const banner = document.getElementById('banner');
+const navEl = document.getElementById('nav');
+const histList = document.getElementById('hist-list');
+const histCount = document.getElementById('hist-count');
+const histTitle = document.getElementById('hist-title');
+const timers = {};
+
+// ALL = すべて表示、'' = 未分類、それ以外はプロジェクト名
+const ALL = ' all';
+let filter = ALL;
+let library = {items: [], projects: [], unfiled: 0};
+let dragging = null;   // ドラッグ中のテキストの相対パス
+
+// 設定はこの端末に保存しておく
+try {
+  glossaryEl.value = localStorage.getItem('glossary') || '';
+  polishEl.checked = localStorage.getItem('polish') !== 'false';
+  fillersEl.checked = localStorage.getItem('fillers') === 'true';
+} catch (e) {}
+const save = () => {
+  try {
+    localStorage.setItem('glossary', glossaryEl.value);
+    localStorage.setItem('polish', polishEl.checked);
+    localStorage.setItem('fillers', fillersEl.checked);
+  } catch (e) {}
+};
+[glossaryEl, polishEl, fillersEl].forEach(el => el.addEventListener('change', save));
+glossaryEl.addEventListener('input', save);
+
+fetch('/api/health').then(r => r.json()).then(h => {
+  const problems = [];
+  if (!h.api_key_set) problems.push('GEMINI_API_KEY is not set. Add it to the .env file and restart the server.');
+  if (!h.ffmpeg_available) problems.push('ffmpeg was not found.');
+  if (!h.claude_available) problems.push('The claude command was not found, so proofreading will be skipped.');
+  if (problems.length) { banner.innerHTML = problems.join('<br>'); banner.style.display = 'block'; }
+}).catch(() => offline());
+
+// サーバーが落ちているとアップロードが Failed to fetch になるだけで理由が分からないため明示する
+function offline() {
+  banner.className = 'err';
+  banner.innerHTML = 'Can\'t reach the server. Start ボイスメモ文字起こし.bat again, then reload this page.';
+  banner.style.display = 'block';
+}
+
+/* ================= アップロード ================= */
+
+drop.addEventListener('click', () => picker.click());
+picker.addEventListener('change', () => { send([...picker.files]); picker.value = ''; });
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => {
+  if (dragging) return;              // 一覧のカードを運んでいるだけなので反応しない
+  e.preventDefault(); drop.classList.add('hot');
+}));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.remove('hot');
+}));
+drop.addEventListener('drop', e => { if (!dragging) send([...e.dataTransfer.files]); });
+
+function send(files) {
+  files.forEach(file => {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('glossary', glossaryEl.value);
+    fd.append('polish', polishEl.checked);
+    fd.append('remove_fillers', fillersEl.checked);
+
+    const tempId = 'up-' + Math.random().toString(36).slice(2);
+    render(tempId, {filename: file.name, size: file.size, status: 'uploading', message: 'Uploading…'});
+
+    fetch('/api/upload', {method: 'POST', body: fd})
+      .then(async r => {
+        if (!r.ok) {
+          const body = await r.json().catch(() => ({}));
+          throw new Error(body.detail || 'Upload failed.');
+        }
+        return r.json();
+      })
+      .then(d => {
+        const stale = document.getElementById('job-' + tempId);
+        if (stale) stale.remove();
+        poll(d.job_id);
+      })
+      .catch(e => render(tempId, {filename: file.name, size: file.size, status: 'error', message: e.message}));
+  });
+}
+
+function poll(id) {
+  const tick = () => fetch('/api/job/' + id).then(r => r.json()).then(job => {
+    render(id, job);
+    if (job.status === 'done' || job.status === 'error') {
+      clearInterval(timers[id]);
+      delete timers[id];
+      if (job.status === 'done') loadLibrary();
+    }
+  }).catch(() => {});
+  tick();
+  timers[id] = setInterval(tick, 1500);
+}
+
+const LABEL = {
+  uploading: 'Uploading', queued: 'Queued', splitting: 'Analyzing',
+  transcribing: 'Transcribing', polishing: 'Proofreading', done: 'Done', error: 'Error'
+};
+
+function render(id, job) {
+  let el = document.getElementById('job-' + id);
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'job';
+    el.id = 'job-' + id;
+    jobsEl.prepend(el);
+  }
+  const mb = (job.size / 1048576).toFixed(1);
+  const running = ['done', 'error'].indexOf(job.status) === -1;
+  const pct = job.total_chunks ? Math.round((job.done_chunks / job.total_chunks) * 100) : 0;
+  const indet = running && (!job.total_chunks || job.status !== 'transcribing');
+
+  let html = '<h3>' + esc(job.filename) + '</h3>' +
+    '<div class="meta">' + mb + ' MB · ' + (LABEL[job.status] || job.status) + '</div>';
+
+  if (running) {
+    html += '<div class="bar' + (indet ? ' indet' : '') + '"><span style="' +
+      (indet ? '' : 'width:' + pct + '%') + '"></span></div>';
+  }
+  const cls = job.status === 'error' ? ' err' : job.status === 'done' ? ' ok' : '';
+  html += '<div class="status' + cls + '">' + esc(job.message || '') + '</div>';
+
+  if (job.warning) html += '<div class="warn">' + esc(job.warning) + '</div>';
+
+  if (job.status === 'done') {
+    html += '<div class="meta" style="margin-top:8px">' + job.chars + ' characters</div>' +
+      '<div class="result" id="text-' + id + '">' +
+      (esc(job.text) || '<em>No speech was detected.</em>') + '</div>' +
+      '<div class="actions">' +
+      '<button class="primary" data-copy="' + id + '">Copy</button>' +
+      '<a class="btn" href="/api/job/' + id + '/download">Download .txt</a>' +
+      '</div>';
+  }
+  el.innerHTML = html;
+}
+
+jobsEl.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-copy]');
+  if (!btn) return;
+  const node = document.getElementById('text-' + btn.dataset.copy);
+  if (node) copyText(node.innerText, btn);
+});
+
+function copyText(text, btn) {
+  const done = () => {
+    const old = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = old; }, 1500);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  try { document.execCommand('copy'); } catch (e) {}
+  ta.remove();
+  done();
+}
+
+function esc(s) {
+  return (s || '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+}
+
+/* ================= ライブラリ（プロジェクト + 保存済みテキスト） =================
+   プロジェクトは output/ のサブフォルダ、テキストはその中のファイルが実体。
+   サーバーを再起動しても、エクスプローラーで開いても同じものが見える。 */
+
+function loadLibrary() {
+  return fetch('/api/history')
+    .then(r => r.json())
+    .then(d => { library = d; renderNav(); renderList(); })
+    .catch(() => offline());
+}
+
+function renderNav() {
+  const rows = [
+    {key: ALL, label: 'All transcripts', n: library.items.length},
+    {key: '', label: 'Unfiled', n: library.unfiled}
+  ];
+  let html = rows.map(r =>
+    '<div class="nav-item' + (filter === r.key ? ' active' : '') + '" data-key="' + esc(r.key) + '">' +
+      '<span class="label">' + esc(r.label) + '</span>' +
+      '<span class="n">' + r.n + '</span>' +
+    '</div>').join('');
+
+  if (library.projects.length) html += '<div class="nav-sep"></div>';
+  html += library.projects.map(p =>
+    '<div class="nav-item' + (filter === p.name ? ' active' : '') + '" data-key="' + esc(p.name) + '">' +
+      '<span class="label">' + esc(p.name) + '</span>' +
+      '<span class="n">' + p.count + '</span>' +
+      '<button class="kill" data-del-project="' + esc(p.name) + '" title="Delete project">&times;</button>' +
+    '</div>').join('');
+
+  navEl.innerHTML = html;
+}
+
+function visibleItems() {
+  if (filter === ALL) return library.items;
+  return library.items.filter(it => it.project === filter);
+}
+
+function renderList() {
+  const items = visibleItems();
+  histTitle.textContent = filter === ALL ? 'All transcripts' : (filter === '' ? 'Unfiled' : filter);
+  histCount.textContent = items.length ? items.length + (items.length === 1 ? ' item' : ' items') : '';
+
+  if (!items.length) {
+    histList.innerHTML = '<div class="empty">' +
+      (filter === ALL ? 'No transcripts yet.' : 'Nothing here yet. Drag a transcript onto this project to file it.') +
+      '</div>';
+    return;
+  }
+
+  histList.innerHTML = items.map(it =>
+    '<div class="hitem" draggable="true" data-path="' + esc(it.path) + '">' +
+      '<div class="head">' +
+        '<span class="grip" title="Drag onto a project">&#8942;&#8942;</span>' +
+        '<span class="caret">&#9654;</span>' +
+        '<span class="title">' + esc(it.title) + '</span>' +
+        (filter === ALL && it.project ? '<span class="chip">' + esc(it.project) + '</span>' : '') +
+        '<span class="when">' + fmtDate(it.created_at) + '</span>' +
+      '</div>' +
+      '<div class="body"></div>' +
+    '</div>').join('');
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return esc(iso);
+  const p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '/' + p(d.getMonth() + 1) + '/' + p(d.getDate()) +
+    ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+
+function openItem(item) {
+  const body = item.querySelector('.body');
+  if (item.classList.contains('open')) { item.classList.remove('open'); return; }
+  item.classList.add('open');
+  if (body.dataset.loaded) return;
+
+  body.innerHTML = '<div class="status">Loading…</div>';
+  fetch('/api/history/item?path=' + encodeURIComponent(item.dataset.path))
+    .then(r => { if (!r.ok) throw new Error('Could not load this transcript.'); return r.json(); })
+    .then(d => {
+      body.dataset.loaded = '1';
+      const opts = ['<option value="">Unfiled</option>'].concat(
+        library.projects.map(p => '<option value="' + esc(p.name) + '"' +
+          (p.name === d.project ? ' selected' : '') + '>' + esc(p.name) + '</option>')).join('');
+      body.innerHTML =
+        '<div class="meta">' + d.chars + ' characters · ' + esc(d.name) + '</div>' +
+        '<div class="result">' + (esc(d.text) || '<em>This file is empty.</em>') + '</div>' +
+        '<div class="actions">' +
+          '<button class="primary" data-act="copy">Copy</button>' +
+          '<a class="btn" href="/api/history/download?path=' + encodeURIComponent(d.path) + '">Download .txt</a>' +
+          '<select data-act="move" title="Move to a project">' + opts + '</select>' +
+          '<button class="danger" data-act="del">Delete</button>' +
+        '</div>';
+    })
+    .catch(e => { body.innerHTML = '<div class="status err">' + esc(e.message) + '</div>'; });
+}
+
+function moveItem(path, project) {
+  return fetch('/api/history/move?path=' + encodeURIComponent(path) +
+               '&project=' + encodeURIComponent(project), {method: 'POST'})
+    .then(r => { if (!r.ok) throw new Error(); return loadLibrary(); })
+    .catch(() => alert('Could not move that transcript.'));
+}
+
+/* ---- 一覧の操作 ---- */
+
+histList.addEventListener('click', e => {
+  const head = e.target.closest('.head');
+  if (head) { openItem(head.parentElement); return; }
+
+  const btn = e.target.closest('button[data-act]');
+  if (!btn) return;
+  const item = btn.closest('.hitem');
+
+  if (btn.dataset.act === 'copy') {
+    copyText(item.querySelector('.result').innerText, btn);
+    return;
+  }
+  if (btn.dataset.act === 'del') {
+    const title = item.querySelector('.title').textContent;
+    if (!confirm('Delete “' + title + '”? This cannot be undone.')) return;
+    fetch('/api/history/item?path=' + encodeURIComponent(item.dataset.path), {method: 'DELETE'})
+      .then(r => { if (!r.ok) throw new Error(); return loadLibrary(); })
+      .catch(() => alert('Could not delete that transcript.'));
+  }
+});
+
+// タッチ端末ではドラッグできないので、プルダウンからも移動できるようにしておく
+histList.addEventListener('change', e => {
+  const sel = e.target.closest('select[data-act="move"]');
+  if (!sel) return;
+  moveItem(sel.closest('.hitem').dataset.path, sel.value);
+});
+
+histList.addEventListener('dragstart', e => {
+  const item = e.target.closest('.hitem');
+  if (!item) return;
+  dragging = item.dataset.path;
+  item.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragging);
+});
+
+histList.addEventListener('dragend', e => {
+  dragging = null;
+  const item = e.target.closest('.hitem');
+  if (item) item.classList.remove('dragging');
+});
+
+/* ---- サイドバー（クリックで絞り込み / ドロップで移動） ---- */
+
+navEl.addEventListener('click', e => {
+  const kill = e.target.closest('button[data-del-project]');
+  if (kill) {
+    const name = kill.dataset.delProject;
+    if (!confirm('Delete the project “' + name + '”?\n\nIts transcripts are not deleted — they move back to Unfiled.')) return;
+    fetch('/api/projects?name=' + encodeURIComponent(name), {method: 'DELETE'})
+      .then(r => { if (!r.ok) throw new Error(); if (filter === name) filter = ALL; return loadLibrary(); })
+      .catch(() => alert('Could not delete that project.'));
+    return;
+  }
+  const row = e.target.closest('.nav-item');
+  if (!row) return;
+  filter = row.dataset.key;
+  renderNav();
+  renderList();
+});
+
+navEl.addEventListener('dragover', e => {
+  const row = e.target.closest('.nav-item');
+  if (!row || !dragging || row.dataset.key === ALL) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  row.classList.add('drop-hot');
+});
+
+navEl.addEventListener('dragleave', e => {
+  const row = e.target.closest('.nav-item');
+  if (row) row.classList.remove('drop-hot');
+});
+
+navEl.addEventListener('drop', e => {
+  const row = e.target.closest('.nav-item');
+  if (!row || !dragging || row.dataset.key === ALL) return;
+  e.preventDefault();
+  row.classList.remove('drop-hot');
+  moveItem(dragging, row.dataset.key);
+  dragging = null;
+});
+
+document.getElementById('new-project').addEventListener('click', () => {
+  const name = prompt('Name of the new project');
+  if (!name || !name.trim()) return;
+  fetch('/api/projects?name=' + encodeURIComponent(name.trim()), {method: 'POST'})
+    .then(async r => {
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({}));
+        throw new Error(body.detail || 'Could not create that project.');
+      }
+      return r.json();
+    })
+    .then(d => { filter = d.name; return loadLibrary(); })
+    .catch(e => alert(e.message));
+});
+
+document.getElementById('hist-reload').addEventListener('click', loadLibrary);
+loadLibrary();
+</script>
+</body>
+</html>

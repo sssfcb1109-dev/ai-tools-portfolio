@@ -1,0 +1,8 @@
+.env
+__pycache__/
+data/
+logs/
+uploads/
+output/
+work/
+context.md

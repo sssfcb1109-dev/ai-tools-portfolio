@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Startup Radar デモ</title>
+<style>
+:root {
+  --bg: #f6f5f1; --surface: #ffffff; --surface-2: #efede7; --border: #e2dfd6;
+  --text: #1d1c19; --muted: #6b6860; --accent: #2f5bd3; --accent-soft: #e6ecfb;
+  --star: #d99a00; --star-off: #d6d2c6; --fire: #e0531f;
+  --good: #1f7a46; --good-soft: #e3f3e9; --bad: #b3261e; --bad-soft: #fbe6e4;
+  --pin: #7a4dd6; --pin-soft: #efe8fc; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151514; --surface: #1e1e1c; --surface-2: #282825; --border: #33322e;
+    --text: #ecebe6; --muted: #a09d94; --accent: #7c9cf5; --accent-soft: #232c45;
+    --star: #f0b429; --star-off: #4a4843; --fire: #ff7a45;
+    --good: #5cc98a; --good-soft: #1b3326; --bad: #ff8a80; --bad-soft: #3d1f1d;
+    --pin: #b494ff; --pin-soft: #2c2342; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151514; --surface: #1e1e1c; --surface-2: #282825; --border: #33322e;
+  --text: #ecebe6; --muted: #a09d94; --accent: #7c9cf5; --accent-soft: #232c45;
+  --star: #f0b429; --star-off: #4a4843; --fire: #ff7a45;
+  --good: #5cc98a; --good-soft: #1b3326; --bad: #ff8a80; --bad-soft: #3d1f1d;
+  --pin: #b494ff; --pin-soft: #2c2342; --shadow: none;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 15px/1.65 -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: var(--accent); }
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
+
+header.top {
+  position: sticky; top: 0; z-index: 10; background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.top-row { display: flex; align-items: center; gap: 12px; padding: 14px 0 10px; }
+.brand { font-weight: 700; font-size: 18px; letter-spacing: .01em; }
+.updated { color: var(--muted); font-size: 12.5px; }
+.nav { margin-left: auto; display: flex; gap: 4px; background: var(--surface-2); padding: 3px; border-radius: 9px; }
+.nav button { border: 0; background: transparent; padding: 5px 12px; border-radius: 7px; font-size: 13.5px; color: var(--muted); }
+.nav button.on { background: var(--surface); color: var(--text); box-shadow: var(--shadow); font-weight: 600; }
+
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 1px solid var(--border); background: var(--surface);
+  padding: 5px 12px; border-radius: 999px; font-size: 13.5px; white-space: nowrap;
+}
+.chip.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+.chip .n { color: var(--muted); margin-left: 4px; font-size: 12px; }
+.chip.on .n { color: inherit; opacity: .7; }
+
+.controls { display: flex; gap: 10px; align-items: center; padding: 0 0 12px; flex-wrap: wrap; }
+.controls select, .controls label {
+  font-size: 13px; color: var(--muted);
+}
+.controls select {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 7px; padding: 4px 8px;
+}
+.controls label { display: inline-flex; gap: 5px; align-items: center; cursor: pointer; }
+
+h2.section { font-size: 13px; color: var(--muted); font-weight: 600; margin: 22px 0 8px; letter-spacing: .03em; }
+h2.section.pin { color: var(--pin); }
+
+.card {
+  display: flex; gap: 14px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+  box-shadow: var(--shadow); position: relative; transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent); }
+.card.pinned { border-color: var(--pin); }
+.card.read { opacity: .62; }
+.card .thumb { flex: none; width: 128px; aspect-ratio: 16/9; border-radius: 8px; object-fit: cover; background: var(--surface-2); }
+.card .body { min-width: 0; flex: 1; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.stars { color: var(--star); letter-spacing: 1px; font-size: 14px; }
+.stars .off { color: var(--star-off); }
+.fires { font-size: 13px; letter-spacing: -1px; }
+.edited { font-size: 11px; color: var(--accent); }
+.title { font-weight: 650; font-size: 15.5px; margin: 4px 0 2px; line-height: 1.45; }
+.orig { color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summary { margin-top: 6px; font-size: 14px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.badge { font-size: 12px; padding: 1px 8px; border-radius: 6px; }
+.badge.support { background: var(--good-soft); color: var(--good); }
+.badge.contradict { background: var(--bad-soft); color: var(--bad); }
+.badge.pin { background: var(--pin-soft); color: var(--pin); }
+.badge.deep { background: var(--accent-soft); color: var(--accent); }
+.unread-dot { position: absolute; top: 14px; right: 14px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.demo-bar { background: var(--accent-soft); color: var(--accent); font-size: 13px; text-align: center; padding: 6px 16px; }
+.empty { text-align: center; color: var(--muted); padding: 60px 0; }
+
+/* detail drawer */
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 20; display: none; }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(760px, 100%); z-index: 21;
+  background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto;
+  transform: translateX(100%); transition: transform .2s ease;
+}
+.open .scrim { display: block; }
+.open .drawer { transform: none; }
+.drawer-head {
+  position: sticky; top: 0; background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 10px 16px; display: flex; gap: 8px; align-items: center; z-index: 1;
+}
+.drawer-head .x { border: 0; background: var(--surface-2); width: 32px; height: 32px; border-radius: 8px; font-size: 18px; }
+.drawer-head .grow { flex: 1; }
+.btn { border: 1px solid var(--border); background: var(--surface); padding: 5px 12px; border-radius: 8px; font-size: 13px; text-decoration: none; color: var(--text); display: inline-block; }
+.btn.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.drawer-body { padding: 18px 20px 60px; }
+.drawer-body h1 { font-size: 20px; line-height: 1.45; margin: 6px 0 4px; }
+.rate { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; background: var(--surface-2); border-radius: 10px; padding: 10px 14px; margin: 14px 0; }
+.rate .lbl { font-size: 12px; color: var(--muted); display: block; }
+.rate button { border: 0; background: none; padding: 0 1px; font-size: 22px; line-height: 1; }
+.rate .s { color: var(--star-off); }
+.rate .s.on { color: var(--star); }
+.rate .f { filter: grayscale(1); opacity: .35; }
+.rate .f.on { filter: none; opacity: 1; }
+.rate .hint { font-size: 12px; color: var(--muted); }
+.note { width: 100%; min-height: 64px; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; background: var(--surface); color: var(--text); font: inherit; font-size: 14px; resize: vertical; }
+.reason { font-size: 13.5px; color: var(--muted); margin: 0 0 12px; }
+.impacts { margin: 0 0 14px; padding: 0; list-style: none; }
+.impacts li { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
+.impacts li.support { background: var(--good-soft); }
+.impacts li.contradict { background: var(--bad-soft); }
+.impacts b { margin-right: 6px; }
+.moments { list-style: none; padding: 0; margin: 0 0 8px; }
+.moments li { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+.moments a { font-variant-numeric: tabular-nums; flex: none; text-decoration: none; font-weight: 600; }
+.md h2 { font-size: 16.5px; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.md h3 { font-size: 15px; margin: 18px 0 6px; }
+.md h4 { font-size: 14px; margin: 14px 0 4px; }
+.md p { margin: 8px 0; }
+.md ul, .md ol { padding-left: 1.4em; margin: 6px 0; }
+.md li { margin: 3px 0; }
+.md code { background: var(--surface-2); padding: 1px 5px; border-radius: 4px; font-size: .92em; }
+.md blockquote { margin: 8px 0; padding: 4px 12px; border-left: 3px solid var(--border); color: var(--muted); }
+.md table { border-collapse: collapse; margin: 10px 0; font-size: 13.5px; display: block; overflow-x: auto; }
+.md th, .md td { border: 1px solid var(--border); padding: 5px 9px; text-align: left; vertical-align: top; }
+.md th { background: var(--surface-2); }
+.subhead { font-size: 13px; font-weight: 600; color: var(--muted); margin: 18px 0 6px; }
+
+/* usage */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 16px 0; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.tile .k { font-size: 12px; color: var(--muted); }
+.tile .v { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 12px; color: var(--muted); }
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+table.usage { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.usage th, table.usage td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+table.usage th:first-child, table.usage td:first-child { text-align: left; }
+table.usage th { color: var(--muted); font-weight: 600; font-size: 12px; }
+.explain { font-size: 13.5px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-top: 16px; }
+.explain p { margin: 6px 0; }
+
+@media (max-width: 600px) {
+  .card { padding: 12px; gap: 10px; }
+  .card .thumb { width: 92px; }
+  .updated { display: none; }
+  .drawer-body { padding: 14px 16px 60px; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="demo-bar">デモ版：実際の実行結果（2026年10月7日）を表示しています。★の修正やメモはこの画面内だけで反映され、保存されません。</div>
+  <div class="wrap" style="padding-bottom:0">
+    <div class="top-row">
+      <div class="brand">Startup Radar</div>
+      <div class="updated" id="updated"></div>
+      <div class="nav">
+        <button data-view="feed" class="on">フィード</button>
+        <button data-view="usage">使用量</button>
+      </div>
+    </div>
+    <div id="feed-controls">
+      <div class="chips" id="chips"></div>
+      <div class="controls">
+        <select id="sort">
+          <option value="relevance">事業関連度順（★）</option>
+          <option value="trend">トレンド重要度順（🔥）</option>
+          <option value="new">新しい順</option>
+        </select>
+        <label><input type="checkbox" id="unread"> 未読のみ</label>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<div id="detail">
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer"></aside>
+</div>
+
+<script>
+const CATS = {
+  funding:  "💰 資金調達",
+  tech:     "⚡ 技術ブレイクスルー",
+  interview:"🎙 創業者インタビュー",
+  analysis: "🔍 業界解説・分析",
+  learning: "📚 創業の学び",
+};
+const state = { items: [], feedback: {}, usage: [], view: "feed", cat: "all", sort: "relevance", unread: false };
+try {
+  const s = JSON.parse(localStorage.getItem("radar-ui") || "{}");
+  Object.assign(state, { cat: s.cat || "all", sort: s.sort || "relevance", unread: !!s.unread });
+} catch (e) {}
+function remember() {
+  try { localStorage.setItem("radar-ui", JSON.stringify({ cat: state.cat, sort: state.sort, unread: state.unread })); } catch (e) {}
+}
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = (n) => (n ?? 0).toLocaleString("ja-JP");
+
+function fb(it) { return state.feedback[it.id] || {}; }
+function rel(it) { return fb(it).relevance ?? it.relevance; }
+function trend(it) { return fb(it).trend ?? it.trend; }
+function isRead(it) { return !!fb(it).read; }
+function edited(it) { const f = fb(it); return (f.relevance != null && f.relevance !== it.relevance) || (f.trend != null && f.trend !== it.trend); }
+function isPinned(it) {
+  return it.watchlist_hit && (Date.now() - new Date(it.published).getTime()) < 7 * 864e5;
+}
+
+function pname(p) { return (String(p.premise).match(/前提\d+/) || [p.premise])[0]; }
+function stars(n) {
+  return `<span class="stars" title="事業関連度 ${n}/5">${"★".repeat(n)}<span class="off">${"★".repeat(5 - n)}</span></span>`;
+}
+function fires(n) { return `<span class="fires" title="トレンド重要度 ${n}/3">${"🔥".repeat(n)}</span>`; }
+function dateStr(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("ja-JP", { month: "numeric", day: "numeric", timeZone: "Asia/Tokyo" });
+}
+
+/* minimal markdown: headings, lists, tables, quotes, bold, code, links */
+function inline(s) {
+  return esc(s)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/(^|[\s(（])(https?:\/\/[^\s<)）]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+}
+function md(src) {
+  const lines = String(src || "").replace(/\r/g, "").split("\n");
+  let html = "", list = null, para = [];
+  const flushPara = () => { if (para.length) { html += `<p>${inline(para.join(" "))}</p>`; para = []; } };
+  const closeList = () => { if (list) { html += `</${list}>`; list = null; } };
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    let m;
+    if (!line.trim()) { flushPara(); closeList(); continue; }
+    if ((m = line.match(/^(#{1,4})\s+(.*)/))) {
+      flushPara(); closeList();
+      const lv = Math.min(4, m[1].length + 1);
+      html += `<h${lv}>${inline(m[2])}</h${lv}>`; continue;
+    }
+    if (/^\s*\|.*\|\s*$/.test(line)) {
+      flushPara(); closeList();
+      const rows = [];
+      while (i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])) rows.push(lines[i++]);
+      i--;
+      const cells = (r) => r.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+      const body = rows.filter((r) => !/^\s*\|[\s:|-]+\|\s*$/.test(r));
+      html += "<table>" + body.map((r, k) => "<tr>" + cells(r).map((c) => k === 0 ? `<th>${inline(c)}</th>` : `<td>${inline(c)}</td>`).join("") + "</tr>").join("") + "</table>";
+      continue;
+    }
+    if ((m = line.match(/^\s*[-*]\s+(.*)/)) || (m = line.match(/^\s*\d+[.)]\s+(.*)/))) {
+      flushPara();
+      const type = /^\s*\d/.test(line) ? "ol" : "ul";
+      if (list !== type) { closeList(); html += `<${type}>`; list = type; }
+      html += `<li>${inline(m[1])}</li>`; continue;
+    }
+    if ((m = line.match(/^>\s?(.*)/))) { flushPara(); closeList(); html += `<blockquote>${inline(m[1])}</blockquote>`; continue; }
+    closeList(); para.push(line.trim());
+  }
+  flushPara(); closeList();
+  return html;
+}
+
+function sorted(list) {
+  const by = {
+    relevance: (a, b) => rel(b) - rel(a) || trend(b) - trend(a) || b.published.localeCompare(a.published),
+    trend: (a, b) => trend(b) - trend(a) || rel(b) - rel(a) || b.published.localeCompare(a.published),
+    new: (a, b) => b.published.localeCompare(a.published),
+  }[state.sort];
+  return [...list].sort(by);
+}
+
+function card(it, pinned) {
+  const imp = (it.premise_impacts || []).map((p) =>
+    `<span class="badge ${p.direction}">${esc(pname(p))}を${p.direction === "support" ? "支持" : "覆す"}</span>`).join("");
+  return `<div class="card ${pinned ? "pinned" : ""} ${isRead(it) ? "read" : ""}" data-id="${esc(it.id)}">
+    ${it.thumbnail ? `<img class="thumb" src="${esc(it.thumbnail)}" alt="" loading="lazy">` : ""}
+    <div class="body">
+      <div class="meta">${stars(rel(it))}${fires(trend(it))}${edited(it) ? '<span class="edited">修正済み</span>' : ""}
+        <span>${CATS[it.category] || ""}</span><span>${esc(it.source)} · ${dateStr(it.published)}</span></div>
+      <div class="title">${esc(it.title_ja || it.title)}</div>
+      <div class="orig">${esc(it.title)}</div>
+      <div class="summary">${esc(it.summary_ja)}</div>
+      <div class="badges">${pinned ? '<span class="badge pin">📌 競合ウォッチ</span>' : ""}${it.deep ? '<span class="badge deep">徹底分析あり</span>' : ""}${imp}</div>
+    </div>
+    ${isRead(it) ? "" : '<span class="unread-dot" title="未読"></span>'}
+  </div>`;
+}
+
+function renderChips() {
+  const counts = { all: state.items.length, saved: 0 };
+  for (const it of state.items) {
+    counts[it.category] = (counts[it.category] || 0) + 1;
+    if (fb(it).saved) counts.saved++;
+  }
+  const entries = [["all", "すべて"], ...Object.entries(CATS), ["saved", "🔖 保存済み"]];
+  $("#chips").innerHTML = entries.map(([k, label]) =>
+    `<button class="chip ${state.cat === k ? "on" : ""}" data-cat="${k}">${label}<span class="n">${counts[k] || 0}</span></button>`).join("");
+}
+
+function renderFeed() {
+  renderChips();
+  let list = state.items.filter((it) =>
+    state.cat === "all" ? true : state.cat === "saved" ? fb(it).saved : it.category === state.cat);
+  if (state.unread) list = list.filter((it) => !isRead(it));
+  const pinned = sorted(list.filter(isPinned));
+  const rest = sorted(list.filter((it) => !isPinned(it)));
+  let html = "";
+  if (pinned.length) html += `<h2 class="section pin">📌 競合ウォッチ（直近7日）</h2>` + pinned.map((it) => card(it, true)).join("");
+  if (rest.length) html += (pinned.length ? `<h2 class="section">その他</h2>` : "") + rest.map((it) => card(it, false)).join("");
+  if (!html) html = `<div class="empty">${state.items.length ? "条件に合う項目はありません。" : "まだデータがありません。初回の実行が終わると、ここに表示されます。"}</div>`;
+  $("#main").innerHTML = html;
+}
+
+function sumTokens(t) { return (t.input || 0) + (t.cache_create || 0) + (t.cache_read || 0) + (t.output || 0); }
+function modelName(m) { return m.includes("haiku") ? "Haiku" : m.includes("sonnet") ? "Sonnet" : m.includes("opus") ? "Opus" : m; }
+
+function renderUsage() {
+  const runs = [...state.usage].reverse();
+  if (!runs.length) { $("#main").innerHTML = `<div class="empty">まだ実行記録がありません。</div>`; return; }
+  const last = runs[0];
+  const weekAgo = Date.now() - 7 * 864e5;
+  const week = runs.filter((r) => new Date(r.started).getTime() > weekAgo);
+  const weekTotal = week.reduce((s, r) => s + sumTokens(r.totals), 0);
+  const modelTiles = Object.entries(last.by_model || {}).map(([m, t]) =>
+    `<div class="tile"><div class="k">前回 ${modelName(m)}</div><div class="v">${fmt(sumTokens(t))}</div>
+     <div class="s">新規入力 ${fmt(t.input + t.cache_create)} / キャッシュ ${fmt(t.cache_read)} / 出力 ${fmt(t.output)}</div></div>`).join("");
+  const rows = runs.slice(0, 60).map((r) => {
+    const bm = r.by_model || {};
+    const pick = (k) => Object.entries(bm).filter(([m]) => m.includes(k)).reduce((s, [, t]) => s + sumTokens(t), 0);
+    return `<tr><td>${new Date(r.started).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
+      <td>${r.counts.articles} / ${r.counts.videos} / ${r.counts.deep}</td>
+      <td>${fmt(pick("haiku"))}</td><td>${fmt(pick("sonnet"))}</td><td><b>${fmt(sumTokens(r.totals))}</b></td>
+      <td>${fmt(r.totals.web_searches)}</td><td>${Math.round(r.seconds / 60)}分</td>
+      <td>$${(r.totals.api_equiv_usd || 0).toFixed(2)}</td><td>${r.failed_calls ? "⚠ " + r.failed_calls : ""}</td></tr>`;
+  }).join("");
+  $("#main").innerHTML = `
+    <div class="tiles">
+      <div class="tile"><div class="k">前回の実行（合計トークン）</div><div class="v">${fmt(sumTokens(last.totals))}</div>
+        <div class="s">${new Date(last.started).toLocaleString("ja-JP")}・${Math.round(last.seconds / 60)}分</div></div>
+      ${modelTiles}
+      <div class="tile"><div class="k">直近7日の合計</div><div class="v">${fmt(weekTotal)}</div><div class="s">${week.length}回の実行</div></div>
+    </div>
+    <div class="tbl-wrap"><table class="usage">
+      <tr><th>実行日時</th><th>記事 / 動画 / 深掘り</th><th>Haiku</th><th>Sonnet</th><th>合計</th><th>Web検索</th><th>所要</th><th>API換算(参考)</th><th></th></tr>
+      ${rows}
+    </table></div>
+    <div class="explain">
+      <p><b>見方：</b>トークンは「新規入力＋キャッシュ書き込み＋キャッシュ読み込み＋出力」の合計です。キャッシュ読み込みは同じ指示文を再利用した分で、通常の入力より軽く扱われます。</p>
+      <p><b>API換算：</b>同じ処理をAPIで行った場合の参考額です。このツールはサブスクで動いているので、実際には請求されません。</p>
+      <p><b>5時間枠の残り：</b>このページからは読み取れません。Claude Code で <code>/usage</code> を実行すると確認できます。実行は毎日3:00（日本時間）で、0〜7時以外は自動でスキップします。</p>
+    </div>`;
+}
+
+function render() {
+  document.querySelectorAll(".nav button").forEach((b) => b.classList.toggle("on", b.dataset.view === state.view));
+  $("#feed-controls").style.display = state.view === "feed" ? "" : "none";
+  $("#sort").value = state.sort;
+  $("#unread").checked = state.unread;
+  state.view === "feed" ? renderFeed() : renderUsage();
+}
+
+// Demo: feedback stays in memory only; nothing is sent anywhere.
+async function post(id, patch) {
+  state.feedback[id] = { ...(state.feedback[id] || {}), ...patch };
+}
+
+function renderDetail(it) {
+  const f = fb(it);
+  const r = rel(it), t = trend(it);
+  const ytBase = it.kind === "video" && it.url;
+  const moments = (it.key_moments || []).map((m) =>
+    `<li><a href="${esc(ytBase)}&t=${m.seconds}s" target="_blank" rel="noopener">${esc(m.t)}</a><span>${esc(m.point)}</span></li>`).join("");
+  const impacts = (it.premise_impacts || []).map((p) =>
+    `<li class="${p.direction}"><b>${esc(pname(p))}を${p.direction === "support" ? "支持" : "覆す"}</b>${esc(p.note)}</li>`).join("");
+  $("#drawer").innerHTML = `
+    <div class="drawer-head">
+      <button class="x" data-act="close" aria-label="閉じる">×</button>
+      <span class="grow"></span>
+      <button class="btn ${f.saved ? "on" : ""}" data-act="save">🔖 ${f.saved ? "保存済み" : "保存"}</button>
+      <button class="btn" data-act="unread">未読に戻す</button>
+      <a class="btn" href="${esc(it.url)}" target="_blank" rel="noopener">${it.kind === "video" ? "動画を開く" : "記事を開く"} ↗</a>
+    </div>
+    <div class="drawer-body">
+      <div class="meta"><span>${CATS[it.category] || ""}</span><span>${esc(it.source)} · ${dateStr(it.published)}</span>
+        ${it.duration ? `<span>${Math.round(it.duration / 60)}分</span>` : ""}${it.deep ? '<span class="badge deep">徹底分析あり</span>' : ""}</div>
+      <h1>${esc(it.title_ja || it.title)}</h1>
+      <div class="orig">${esc(it.title)}</div>
+      <div class="rate">
+        <div><span class="lbl">事業関連度</span>${[1, 2, 3, 4, 5].map((n) => `<button class="s ${n <= r ? "on" : ""}" data-rel="${n}">★</button>`).join("")}</div>
+        <div><span class="lbl">トレンド重要度</span>${[1, 2, 3].map((n) => `<button class="f ${n <= t ? "on" : ""}" data-trend="${n}">🔥</button>`).join("")}</div>
+        <div class="hint">${edited(it) ? `AIの評価は ★${it.relevance} 🔥${it.trend}。あなたの修正は次回以降の判定に反映されます。` : "評価が違うと思ったら押して修正。次回以降の判定に反映されます。"}</div>
+      </div>
+      <p class="reason">判定理由：${esc(it.relevance_reason)}</p>
+      ${impacts ? `<div class="subhead">前提への影響</div><ul class="impacts">${impacts}</ul>` : ""}
+      ${moments ? `<div class="subhead">重要な場面（押すとその時点から再生）</div><ul class="moments">${moments}</ul>` : ""}
+      <div class="md">${md(it.detail_md)}</div>
+      <div class="subhead">メモ（判定の理由を書くと、次回以降の判定に反映されます）</div>
+      <textarea class="note" id="note" placeholder="例：自分の業界向けではないので★2で十分">${esc(f.note || "")}</textarea>
+      <div style="margin-top:6px"><button class="btn" data-act="note">メモを保存</button> <span id="note-ok" class="hint"></span></div>
+    </div>`;
+  $("#drawer").dataset.id = it.id;
+}
+
+function openDetail(id) {
+  const it = state.items.find((x) => x.id === id);
+  if (!it) return;
+  renderDetail(it);
+  document.getElementById("detail").classList.add("open");
+  $("#drawer").scrollTop = 0;
+  if (!isRead(it)) post(id, { read: true });
+}
+function closeDetail() { document.getElementById("detail").classList.remove("open"); render(); }
+
+document.addEventListener("click", async (e) => {
+  const navBtn = e.target.closest(".nav button");
+  if (navBtn) { state.view = navBtn.dataset.view; render(); return; }
+  const chip = e.target.closest(".chip");
+  if (chip) { state.cat = chip.dataset.cat; remember(); render(); return; }
+  const c = e.target.closest(".card");
+  if (c) { openDetail(c.dataset.id); return; }
+  if (e.target.id === "scrim") { closeDetail(); return; }
+  const id = $("#drawer").dataset.id;
+  const it = state.items.find((x) => x.id === id);
+  if (!it || !e.target.closest("#drawer")) return;
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.rel) { await post(id, { relevance: +b.dataset.rel }); renderDetail(it); }
+  else if (b.dataset.trend) { await post(id, { trend: +b.dataset.trend }); renderDetail(it); }
+  else if (b.dataset.act === "close") closeDetail();
+  else if (b.dataset.act === "save") { await post(id, { saved: !fb(it).saved }); renderDetail(it); }
+  else if (b.dataset.act === "unread") { await post(id, { read: false }); closeDetail(); }
+  else if (b.dataset.act === "note") { await post(id, { note: $("#note").value }); $("#note-ok").textContent = "保存しました"; }
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
+$("#sort").addEventListener("change", (e) => { state.sort = e.target.value; remember(); render(); });
+$("#unread").addEventListener("change", (e) => { state.unread = e.target.checked; remember(); render(); });
+
+async function load() {
+  try {
+    const d = await (await fetch("demo-data.json")).json();
+    Object.assign(state, d);
+    const lastRun = d.usage[d.usage.length - 1];
+    $("#updated").textContent = lastRun ? "最終更新 " + new Date(lastRun.started).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+  } catch (e) {
+    $("#main").innerHTML = `<div class="empty">データを読み込めませんでした。ページを再読み込みしてください。</div>`;
+    return;
+  }
+  render();
+}
+load();
+</script>
+</body>
+</html>

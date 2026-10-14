@@ -1,0 +1,411 @@
+{
+ "items": [
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/ex-ramp-engineers-raise-20m-for-platform-melius-after-scrapping-their-first-product",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/ex-ramp-engineers-raise-20m-for-platform-melius-after-scrapping-their-first-product/",
+   "title": "Ex-Ramp engineers raise $20M for platform Melius after scrapping their first product",
+   "published": "2026-10-06T22:34:03+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "funding",
+   "title_ja": "Ramp元エンジニアがMeliusでシリーズAで$20M調達、初期製品を完全廃棄してピボット",
+   "summary_ja": "Ramp出身の3人が広告最適化ツールを廃棄、AI広告クリエイティブ生成に転換。$25M調達（Series A $20M）で2ヶ月で$1M ARR達成。",
+   "relevance": 3,
+   "trend": 1,
+   "relevance_reason": "Vertical AI企業の初期アイデア廃棄・ピボットの事例として、製品開発の判断基準を学べる参考事例。",
+   "companies": [
+    "Melius",
+    "Ramp",
+    "CRV"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Ramp元エンジニア（Joowon Kim、Young Kim、Arnav Ramu）が創設\n- 初期の広告最適化ツール（6ヶ月開発）を完全廃棄、コードベース全削除\n- AI広告クリエイティブ・キャンペーン生成プラットフォームに転換\n- Series A $20M（CRV主導）+ Seed $5M（General Catalyst）= 計$25M\n- 2ヶ月でARR $1M到達、競合Higgsfield ($700M+ ARR)の高速成長を認識するも市場規模で複数競合共存可能と判断"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/how-ai-decision-models-could-change-content-moderation",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/how-ai-decision-models-could-change-content-moderation/",
+   "title": "How AI decision models could change content moderation",
+   "published": "2026-10-06T20:35:20+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "tech",
+   "title_ja": "デシジョンモデルがコンテンツモデレーション領域で新展開、Musibiが軽量PolicyLM-1.7Bをリリース",
+   "summary_ja": "MusibiがポリシーベースのデシジョンモデルPolicyLM-1.7Bをオープンウェイト公開。50ms以下の実行、自然言語ポリシー設定で再訓練不要。",
+   "relevance": 2,
+   "trend": 2,
+   "relevance_reason": "デシジョンモデルの実装例として技術トレンドの参考になるが、コンテンツモデレーションは事業直接関連ではない。",
+   "companies": [
+    "Musubi",
+    "TypeSafe AI"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Musibiが軽量デシジョンモデルPolicyLM-1.7Bをオープンウェイトで公開\n- 自然言語でコンテンツポリシーを設定、50ms以下でバイナリ判定\n- LLMより安価・高速、ポリシー変更時に再訓練不要（重要な利点）\n- TypeSafe AI「Jev」（9月リリース）がトレンド起点、OpenAI・Amazonも追従\n- GLiNER（2024、固有表現認識タスク）の手法を応用"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/ai-computing-startup-lambda-to-raise-4b-ahead-of-planned-ipo",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/ai-computing-startup-lambda-to-raise-4b-ahead-of-planned-ipo/",
+   "title": "AI computing startup Lambda to raise $4B ahead of planned IPO",
+   "published": "2026-10-06T20:00:30+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "funding",
+   "title_ja": "GPU提供クラウドのLambdaが$4B調達、2027年IPO予定で$14.5B時価評価",
+   "summary_ja": "LambdaがCoatue・Blackstone主導で$4B調達、Anthropicの$35B契約でバックログが6月$15Bから9月$50Bに急増。",
+   "relevance": 2,
+   "trend": 2,
+   "relevance_reason": "AI基盤インフラの大型調達・IPO動向はVertical AIの環境認識に有用だが、直接的な事業参考ではない。",
+   "companies": [
+    "Lambda",
+    "Anthropic",
+    "Coatue Management"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Lambda（GPU提供クラウド）がCoatue Management・Blackstone主導で$4B調達\n- Pre-money $14.5B、追加$1B債券調達済み\n- バックログが6月$15Bから9月$50Bに急増（3.3倍）、うち$35BはAnthropicの契約\n- 2027年IPO予定、2025年ラウンドからの評価上昇を反映\n- CoreWeave・Nebius等他neocloud企業もIPO/公開市場活動中"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/the-next-hurdle-for-ai-agents-getting-websites-to-let-them-in",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/the-next-hurdle-for-ai-agents-getting-websites-to-let-them-in/",
+   "title": "The next hurdle for AI agents: getting websites to let them in",
+   "published": "2026-10-06T19:56:50+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "analysis",
+   "title_ja": "AI エージェントの課題：ウェブサイトからのブロック問題が業界標準化を促進",
+   "summary_ja": "Meta Muse・ChatGPT Dotsなどの消費者向けAIエージェントがAmazon・Yelp・eBay等でブロック。Meta・Walmart・Stripe等がagent-to-agent通信のオープン標準開発中。",
+   "relevance": 2,
+   "trend": 2,
+   "relevance_reason": "（読み手の事業計画に関わる判定理由のため、デモでは非表示）",
+   "companies": [
+    "Meta",
+    "Amazon",
+    "Walmart"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Meta Muse・ChatGPT Dots・Instinct等が複数サイトでブロック経験\n- Amazon意図的にブロック、Walmart・Yelp等も対応中\n- 従来のbot対策（CAPTCHA等）が正当なエージェントも排除\n- Meta・Walmart・Stripe・Sierra・Genesys・Decagon等がオープン標準（agent-to-agent通信プロトコル）開発中\n- エアラインの特に厳格（Delta・United）、実装にセキュリティ・顧客体験の配慮が必須"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/hark-releases-an-ai-personal-assistant-with-a-focus-on-privacy",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/hark-releases-an-ai-personal-assistant-with-a-focus-on-privacy/",
+   "title": "Hark releases an AI personal assistant with a focus on privacy",
+   "published": "2026-10-06T18:22:45+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "tech",
+   "title_ja": "Hark Pro がプライバシー重視のAIパーソナルアシスタントをリリース、コンピュータ操作特化",
+   "summary_ja": "Brett Adcock 創設の Hark がコンピュータ操作専用に特化した AI アシスタントをリリース。元Apple設計者が率い、2027年にAI-nativeデバイスを予告。",
+   "relevance": 3,
+   "trend": 2,
+   "relevance_reason": "System of Action型のAIエージェント実装事例として、透明性・信頼構築のUX設計が参考になる。デバイス・OS戦略も視野に入る。",
+   "companies": [
+    "Hark",
+    "Meta",
+    "OpenAI"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Brett Adcock（シリアルファウンダー）創設、Hark Proをリリース\n- 元Apple設計者Abidur Chowdhury がデザイン主導、プライバシー重視（Meta・OpenAIとの差別化）\n- コンピュータ操作に特化した基盤モデル、LLMより高速・廉価\n- UIで透明性を強調：エージェント操作を小窓で可視化、ユーザー信頼構築\n- 2027年にAI-native device リリース予定（ウェアラブル以外の新形態示唆）"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/mirror-particle-is-building-a-world-model-of-human-behavior",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/mirror-particle-is-building-a-world-model-of-human-behavior/",
+   "title": "Mirror Particle is building a ‘world model’ of human behavior",
+   "published": "2026-10-06T16:35:00+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "tech",
+   "title_ja": "Mirror Particleが「世界モデル」でヒト行動予測に挑戦、LLMのロールプレイを否定",
+   "summary_ja": "2年目のMirror Particleが、ビジョン・社会知性・空間推論を統合した基盤モデルでヒト行動を予測。LLMのロールプレイ型アプローチを批判。",
+   "relevance": 2,
+   "trend": 2,
+   "relevance_reason": "行動予測カテゴリが活発に資金調達されており業界トレンドとして参考になるが、事業直接関連ではない。",
+   "companies": [
+    "Mirror Particle",
+    "Simile",
+    "Humans&"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Mirror Particle（SF、2年目）がヒト行動予測の基盤モデル構築\n- LLMのロールプレイ型アプローチを批判（「スーパーソーカーをナイアガラにぶつけるようなもの」）\n- ビジョン・社会知性・空間推論を統合した「世界モデル」アプローチ\n- 初期ラウンド調達済み、VC ラウンド間近、Disrupt 参戦予定\n- 市場参考：Simile $200M @$2B、Aaru $88M @$1B、Humans& $480M seed @$4.48B"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/anthropic-gives-startups-a-free-year-of-enterprise-service-and-1000-in-token-credits",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/anthropic-gives-startups-a-free-year-of-enterprise-service-and-1000-in-token-credits/",
+   "title": "Anthropic is giving startups a free year of Claude Team and $1,000 in credits",
+   "published": "2026-10-06T16:00:00+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": true,
+   "key_moments": [],
+   "category": "learning",
+   "title_ja": "Anthropicがスタートアップ向けプログラムを拡充、1年間のClaude無料提供＋$1,000クレジット",
+   "summary_ja": "AnthropicがClaude for Startupsを拡充。Claude Team 1年無料（最大5席）と$1,000のAPIクレジット、Marketplace、Applied AIの相談枠を提供する。",
+   "relevance": 3,
+   "trend": 1,
+   "relevance_reason": "（読み手の事業計画に関わる判定理由のため、デモでは非表示）",
+   "companies": [
+    "Anthropic"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "## 何が起きたか\n- 2026年10月6日（SF Tech Week）、AnthropicがClaude for Startupsプログラムを拡充した。\n- 内容は、Claude Team（グループ向け有料プラン）を1年間無料（プレミアム席は最大5つ）、$1,000のAPIクレジット、Claude Marketplace（プラグイン開発）へのアクセス、Applied AIチームへのオンライン相談枠。\n- 対象は「設立5年以内」または「過去2年以内に資金調達した」企業。Claude for Startupsのページから申し込む。\n\n## 会社の概要\n| 項目 | 内容 |\n|---|---|\n| 主体 | Anthropic（Claudeの開発元）。今回は企業の紹介ではなく支援プログラムの話 |\n| 提供物 | Claude Team 1年無料（最大5席）、$1,000のAPIクレジット、Marketplace、Applied AIとのオフィスアワー |\n| 対象 | 設立5年以内、または直近2年以内に資金調達した企業 |\n| 価格 | 無料。ただし$1,000のクレジットは小さい額 |\n| 創業者・調達履歴 | 今回の主題ではないため割愛 |\n| 注意点 | 検索では、これまでのプログラムはAPIクレジットが$5,000〜$100,000の階層制で、VC紹介があると増額されると報じられていた（第三者サイトの情報で、公式未確認）。今回の$1,000が従来の枠と別なのか、置き換えなのかは不明 |\n\n## 出典\n- [TechCrunch: Anthropic is giving startups a free year of Claude Team and $1,000 in credits](https://techcrunch.com/2026/10/06/anthropic-gives-startups-a-free-year-of-enterprise-service-and-1000-in-token-credits/)\n- [Claude for Startups（公式）](https://claude.com/programs/startups)\n- [Anthropic Claude for Startups: Credits, Tiers, Eligibility (2026)（第三者ガイド）](https://guptadeepak.com/anthropic-claude-for-startups-the-complete-guide-to-credits-tiers-and-eligibility-2026/)"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/libreoffice-says-no-ai-is-now-a-software-feature",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/libreoffice-says-no-ai-is-now-a-software-feature/",
+   "title": "LibreOffice says ‘no AI’ is now a software feature",
+   "published": "2026-10-06T15:25:00+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "analysis",
+   "title_ja": "LibreOfficeが「AI非搭載」をプロダクト機能として宣言、プライバシー・ユーザー主権を優先",
+   "summary_ja": "LibreOfficeがAIを標準機能から除外。ユーザーデータのサーバーアップロード防止、拡張機能でローカルAIは可能。エンシットフィケーション反発。",
+   "relevance": 1,
+   "trend": 1,
+   "relevance_reason": "オープンソースドキュメント編集ツールのAI政策で、事業直接関連なし。ただしプライバシー・ユーザー管理の考え方は背景知識として有用。",
+   "companies": [
+    "LibreOffice"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Document Foundation（LibreOffice開発者）が AI 非搭載を「デリベレート設計」と宣言\n- ユーザーデータがサーバーアップロードされない、ローカル処理のみ\n- 拡張機能でローカル AI モデル接続は可能（選択肢として提供）\n- 理由：機密・法務特権・個人データを扱う組織の要件（監査対応）\n- 「エンシットフィケーション」（ブログウェアの機能肥大化）反発の一環"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/mistrals-new-1t-model-aims-to-leapfrog-closed-and-open-rivals",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/mistrals-new-1t-model-aims-to-leapfrog-closed-and-open-rivals/",
+   "title": "Mistral’s new 1T model aims to leapfrog closed and open rivals",
+   "published": "2026-10-06T14:33:16+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "tech",
+   "title_ja": "Mistral AIが1兆パラメータの「Le Chonk」をリリース、GPU効率で中国・閉鎖型競合を上回る",
+   "summary_ja": "Mistral AIが Mistral Large 4（1T パラメータ）をリリース。4,000 GPU で訓練（中国比2-3倍効率）、3週間後にオープンウェイト化。",
+   "relevance": 2,
+   "trend": 2,
+   "relevance_reason": "大型言語モデルの性能・効率トレンドは業界参考になるが、Vertical AI事業の技術選択には直接影響しない。",
+   "companies": [
+    "Mistral AI",
+    "Nvidia"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Mistral AI が Mistral Large 4（Le Chonk、1兆パラメータ）をリリース\n- 4,000 GPU で訓練、中国競合比2-3倍GPU効率、閉鎖型競合より大幅効率化\n- 現在 API エンドポイントのみ、3週間後にオープンウェイト化予定（セーフティテスト中）\n- 用途最適化：サイバーセキュリティ、ファイナンス、チップ設計\n- ASML（Series C 主導）・Samsung（Series D 主導 €21B）が主バッカー"
+  },
+  {
+   "id": "yt:cJsHel27Z6M",
+   "kind": "video",
+   "source": "a16z",
+   "url": "https://www.youtube.com/watch?v=cJsHel27Z6M",
+   "title": "Building Cyber Defense for the Agentic Era",
+   "published": "2026-10-06T14:30:37+00:00",
+   "thumbnail": "https://i.ytimg.com/vi/cJsHel27Z6M/mqdefault.jpg",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:58:46+00:00",
+   "deep": false,
+   "key_moments": [
+    {
+     "t": "01:06",
+     "seconds": 66,
+     "point": "Mandiaが創業者陣に惹かれ、AIの転換期に参画した理由を語る"
+    },
+    {
+     "t": "04:19",
+     "seconds": 259,
+     "point": "AI攻撃の性質:規模・速度が人間を圧倒、ただし現状は無駄も多い"
+    },
+    {
+     "t": "07:18",
+     "seconds": 438,
+     "point": "国家の狙撃型攻撃とAIのドローン群型攻撃の違い"
+    },
+    {
+     "t": "11:13",
+     "seconds": 673,
+     "point": "ハイパーアタックと変化のみを監視する継続テストの仕組み"
+    },
+    {
+     "t": "14:34",
+     "seconds": 874,
+     "point": "ペンテスト死亡論と、90件超のゼロデイ発見"
+    },
+    {
+     "t": "18:36",
+     "seconds": 1116,
+     "point": "Armadin Blue:補償的コントロールによる自律防御"
+    },
+    {
+     "t": "29:34",
+     "seconds": 1774,
+     "point": "20のキルチェーン評価で、オープンとクローズドのモデルが同じ到達点"
+    },
+    {
+     "t": "35:44",
+     "seconds": 2144,
+     "point": "AI時代の会社づくり:資金・速度・ブランド・GTMの4つの違い"
+    }
+   ],
+   "category": "interview",
+   "title_ja": "エージェント時代のサイバー防御:Mandia氏が語るArmadinと自律防御",
+   "summary_ja": "Mandiant創業者Kevin MandiaがArmadinで、AI攻撃で顧客網を継続的に突きゼロデイを90件超発見。検知・対応から人間が外れる自律防御への移行を語る。",
+   "relevance": 2,
+   "trend": 2,
+   "relevance_reason": "（読み手の事業計画に関わる判定理由のため、デモでは非表示）",
+   "companies": [
+    "Armadin",
+    "Mandiant",
+    "CrowdStrike",
+    "Palo Alto Networks",
+    "Wiz"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "## 要点\n- Armadinはフロンティアモデルを使い「攻撃側AI」で顧客の本番ネットワークを継続的に攻撃し、実際に悪用可能な脆弱性を検証付きで見つける。2026年1月以降、Fortune 500の本番環境でゼロデイを90件超発見したという。\n- AI攻撃は国家の「狙撃」型から「ドローン群」型へ変わる。規模と速度で人間を圧倒し、技術力の低い攻撃者も強く見える(攻撃の平準化)。帰属(誰の攻撃か)の特定も難しくなる。\n- 検知・対応のループに人間を置くと遅すぎる。防御も自律化が必須になり、SOCの工程の多くは消える、というのがMandiaの見立て。\n- 攻撃用モデルの安全確保には、ハイパーバイザー、プロキシ、全プロンプトの監視、決定論的ルールなどの多層防御が必要。セキュリティ専門家とAI研究者が組む必要がある。\n- 創業の教訓は「顧客を得て、満足させ、繰り返す」。ただしAI時代はそれを超高速で行い、資金調達とGTM構築を先行させる必要がある。\n\n## 内容\n### 復帰の動機とArmadinの二段構え\n- Mandiaは創業者(David Slater、Travis Lam、Evan Pena)の才能に惹かれ、「AIの転換期を見送りたくない」と参画した。\n- Act 1は「Armadin Red」で、悪用可能なリスクを誰よりも早く見つける。Act 2は「Armadin Blue」で、EDRやファイアウォールと連携し、補償的コントロール(応急止血)を高速に作る。CrowdStrikeやPalo Alto Networksと協業中。\n- 「防御は、強い攻撃に対して練習しなければ成立しない」。比喩はレイブンズの守備陣と練習用オフェンス。\n\n### AI攻撃の性質\n- 人間は1本の経路に絞るが、AIは何千もの経路を同時に試せる。「AIが1マイクロ秒でやることは人間70人分」。\n- 現時点ではAIらしい無駄がある。A地点に侵入、B地点へ横移動、またAを攻撃、など。ステルス性は低く、人間による追加学習が必要。\n- 攻撃対象のコードは構造化言語なので、最先端モデルは不要でオープンモデルで足りる。匿名でGPUを使える環境が整えば犯罪利用が増える。\n\n### ハイパーアタックと継続的テスト\n- 数千のエージェント(話中では25,000)で網を一気にマップし、数TB規模のメタデータの「デジタルツイン」を作る。\n- その後は定期的に変化(アプリ、経路、サービス、新規マシン)だけを安く監視し、変化した箇所を攻撃する。\n- 新しいCVEが出ても、悪用可能かを悪意ある者より先に判定することを目指す。\n\n### ペンテスト死亡論\n- 従来のペンテスト(Tenable、Rapid7、Qualys系)は既知の脆弱性の列挙が中心で、悪用可否を証明せず、無意味なリストを増やしがち。\n- Armadinは実際にエクスプロイトを実行して検証するので、誤検知がない。ソースコードなしのブラックボックスで、論理欠陥も見つける。顧客は通常48時間以内にインシデント対応モードに入る。\n- Mythosのようなソースコード走査は「ノイズ」だと位置づける一方、Mythosが脅威を広く認知させたことは認めている。\n- 発見の大半は人間が出しているが、AIが退屈な作業の90%超を担う。最近の数件はAI単独の発見(「We've made the turn」)。\n\n### 自律防御とSOCの未来\n- 「検知・対応に人間がいると遅すぎる」。予防・検知・対応の各フェーズの窓が縮み、境界は曖昧になる。\n- 当面は攻撃側が有利で、各社は総力戦(エンジニアの大部分を防御強化に投入した例も)。\n- 最初の自律防御は粗くても、「悪い応急パッチ」のほうが侵入よりまし。\n\n### モデルの安全と評価\n- 実在の20のキルチェーンで評価したところ、どのモデルも完走できたのは最大8つ。オープンウェイトも最先端クローズドも同じ到達点で、差は速度とコスト(クローズドが速い)。\n- 安全確保は、ハイパーバイザー、ホストベース制限、プロキシ、全プロンプトの受動監視、分類器、決定論的ルール。エージェントを止める理由の大半は安全ではなく、無駄遣い(コスト)。\n- 制限しすぎると創造性が失われるので、少し緩める。不明な挙動は一時停止して人間へエスカレーション。\n- Hugging Face事件への言及:「技術の転換期には、毎回モデルの能力を過小評価する」。\n\n### 会社づくりの哲学\n- Mandiant(2004年創業)は自己資金で黒字だったが、今は速度のため資金調達が必須。\n- 差分は4つ:資金、速度、ブランド、GTMの構築。「80mphの追い風があるが、営業部隊もGTMもまだない」。\n- Wizが18か月でARR1億ドルに到達した例を挙げ、それを超えると宣言。\n- 最難関の顧客(メガバンク、小売、航空)を熱狂させて「ハロー」を得る。\n- 週次で営業をトレーニングする仕組みが要る。エンジニアは1部屋に集める。CEOの仕事は混乱を社員から隠すこと。\n- IPは6か月で陳腐化しうる。差別化は顧客が絶賛することだけ。\n\n## 創業者として学べること\n- 最難関の顧客を最初に熱狂させると、ブランドと信頼(ハロー)が一気に得られる。\n- 製品が2週間ごとに変わるなら、営業教育も週次の仕組みにする。\n- AIの安全は「全部禁止」でも「放任」でもなく、分類器と人間のエスカレーションで線を探る。\n- ドメイン専門家(レッドチーマー)がAI評価(eval)を作ると、精度が決定的に上がる。\n- 競争が激しい時代、差別化の源泉は「顧客が絶賛するか」に収れんする。",
+   "duration": 2857
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/pinterests-ai-now-turns-beauty-pins-into-action-plans",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/pinterests-ai-now-turns-beauty-pins-into-action-plans/",
+   "title": "Pinterest’s AI now turns beauty Pins into action plans",
+   "published": "2026-10-06T14:00:49+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "tech",
+   "title_ja": "Pinterest の AI が美容 Pin をサロン実行計画に変換、スタイリスト用語・コスト・所要時間を追加",
+   "summary_ja": "Pinterest が「Beauty Guides」をリリース。美容 Pin をスタイリスト用語・コスト・メンテナンス情報に変換。ヘアスタイル・ネイルに対応。",
+   "relevance": 1,
+   "trend": 1,
+   "relevance_reason": "（読み手の事業計画に関わる判定理由のため、デモでは非表示）",
+   "companies": [
+    "Pinterest"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- Pinterest が「Beauty Guides」フィーチャーをリリース\n- ユーザー保存の美容 Pin をスタイリスト用語（balayage、root melt 等）に翻訳\n- 所要時間・コスト・メンテナンス頻度を提供（例：balayage は数百ドル、定期トーンが必要）\n- Get the Guide ボタンで起動、ヘアスタイル・カラー・ネイル形状に対応\n- ユーザー行動（美容インスピレーション保存）を実行計画に変換する実装例"
+  },
+  {
+   "id": "web:https://techcrunch.com/2026/10/06/get-all-your-questions-answered-at-techcrunch-disrupt-2026-the-full-breakout-session-agenda-revealed",
+   "kind": "article",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2026/10/06/get-all-your-questions-answered-at-techcrunch-disrupt-2026-the-full-breakout-session-agenda-revealed/",
+   "title": "Get all your questions answered at TechCrunch Disrupt 2026: The full breakout session agenda revealed",
+   "published": "2026-10-06T14:00:00+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": false,
+   "key_moments": [],
+   "category": "learning",
+   "title_ja": "TechCrunch Disrupt 2026 が 10 月 13-15 開催、Physical AI・AI agents・Fundraising 等ワークショップ",
+   "summary_ja": "TechCrunch Disrupt 2026（SF、10月13-15）のブレークアウトセッション予定を公開。Physical AI・AI agents・Inference economy・Fundraising 等。",
+   "relevance": 2,
+   "trend": 1,
+   "relevance_reason": "イベント告知だが、参加可能であれば「AI agents」「Fundraising」セッションが事業計画・資金調達の実践学習に有用。",
+   "companies": [],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "- TechCrunch Disrupt 2026 開催（10月13-15、Moscone West SF）\n- 10,000+ 参加予定（ファウンダー・投資家・オペレーター）\n- ブレークアウトセッション（50分）：Physical AI、AI agents（Anthropic講師 Steve Androulakis・Sachin Malhotra）、Inference economy、Fundraising 等\n- 参加費割引中（最大 $100 off、2人目 50% off）、レイオフ対象者 $75 Expo+ パス\n- 登録先：disrupt.techcrunch.com"
+  },
+  {
+   "id": "web:https://news.crunchbase.com/ma/ai-startup-acquisitions-legal-healthcare-openai",
+   "kind": "article",
+   "source": "Crunchbase News",
+   "url": "https://news.crunchbase.com/ma/ai-startup-acquisitions-legal-healthcare-openai/",
+   "title": "Crunchbase Data Shows AI’s Most Active Startups Are Becoming Serial Acquirers",
+   "published": "2026-10-06T11:00:47+00:00",
+   "run_id": "20261007-195543",
+   "added": "2026-10-07T10:57:54+00:00",
+   "deep": true,
+   "key_moments": [],
+   "category": "analysis",
+   "title_ja": "Crunchbase データ：AI スタートアップが買収者に転換、2026年195件（2025年比+14%）で M&A が成長戦略化",
+   "summary_ja": "Crunchbaseによると、2026年9月29日までのAI企業間のAIスタートアップ買収は195件で、2025年通年比14%増。Legora、Harvey、SierraなどVertical AIも連続買収者になっている。",
+   "relevance": 3,
+   "trend": 2,
+   "relevance_reason": "（読み手の事業計画に関わる判定理由のため、デモでは非表示）",
+   "companies": [
+    "Legora",
+    "Harvey",
+    "OpenAI"
+   ],
+   "watchlist_hit": false,
+   "premise_impacts": [],
+   "detail_md": "## 何が起きたか\nCrunchbase Newsによると、2026年9月29日までに、ベンチャー支援を受けたAI企業がAIスタートアップを買収した件数は195件でした。2025年通年より14%多い件数です。一方で買い手の数は2%しか増えていません。買収を繰り返す企業が増えたことが件数を押し上げています。\n- 3年間で、買収を繰り返した67社が全取引の約42%を占めました。\n- OpenAIは3年間で20件で、今年は10件です。\n- Legoraは今年5件、Harveyは4件です。SierraとCursorは各3件です。\n- 買収価格が開示されたのは195件中12件だけです。\n- Menlo VenturesのRama Sekhar氏は、高い評価額を株式という「安い通貨」にして、薄まりを抑えながら買収していると述べています。\n\n## 会社の概要\n主役は特定の1社ではなく、買収を繰り返すAI企業群です。検索で確認できた範囲は次のとおりです。\n\n| 項目 | 内容 |\n|---|---|\n| Legora(法務AI) | 2026年3月にSeries Dで5.5億ドルを調達し、評価額は55億ドルでした(Accel主導)。今年の買収はWalter AI、Qura、Graceview、Cadastralなどです。Cadastralは商業不動産向けで、隣接する文書集約型の業種に広がっています。 |\n| Harvey(法務AI) | 評価額は約110億ドルと報じられています。今年はHexus、Lume AI、Benchmark(資産運用向け)を買収しました。 |\n| Sierra、Cursor | 記事によれば、今年の買収は各3件です。詳細は未確認です。 |\n| 価格・料金 | 買収側の料金は記事に出ていません。不明です。 |\n\n- 買収の狙いは、プロダクトの穴埋め、新市場への参入、専門チームの獲得です。\n- 創業者の経歴と調達履歴の詳細は、今回は調べていません。\n\n## 出典\n- [Crunchbase News: AI's Most Active Startups Are Becoming Serial Acquirers](https://news.crunchbase.com/ma/ai-startup-acquisitions-legal-healthcare-openai/)\n- [Anchr raises $5.8M (FinTech Futures)](https://www.fintechfutures.com/press-releases/anchr-raises-5-8m-to-bring-ai-native-automation-to-america-s-food-supply-chain)\n- [Harvey strengthens asset management offering with Benchmark acquisition (Legal Technology)](https://legaltechnology.com/harvey-strengthens-asset-management-offering-with-benchmark-acquisition/)\n- [Inside Legora's hunt for legal tech acquisitions (Sifted)](https://sifted.eu/articles/inside-legoras-hunt-for-legal-tech-acquisitions)"
+  }
+ ],
+ "feedback": {},
+ "usage": [
+  {
+   "run_id": "20261007-195543",
+   "started": "2026-10-07T19:55:43",
+   "seconds": 215,
+   "counts": {
+    "articles": 12,
+    "videos": 1,
+    "deep": 2
+   },
+   "totals": {
+    "input": 36634,
+    "cache_create": 55169,
+    "cache_read": 38709,
+    "output": 23199,
+    "web_searches": 3,
+    "api_equiv_usd": 0.4361
+   },
+   "by_model": {
+    "claude-haiku-4-5-20251001": {
+     "input": 36622,
+     "cache_create": 14365,
+     "cache_read": 0,
+     "output": 12459
+    },
+    "claude-sonnet-5-5": {
+     "input": 12,
+     "cache_create": 40804,
+     "cache_read": 38709,
+     "output": 10740
+    }
+   },
+   "failed_calls": 0
+  }
+ ]
+}

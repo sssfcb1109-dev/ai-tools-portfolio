@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {"name": "Y Combinator", "kind": "video", "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCcefcZRL2oaA_uBNeo5UOWg"},
+    {"name": "a16z", "kind": "video", "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC9cn0TuPq4dnbTY-CBsm8XA"},
+    {"name": "TechCrunch", "kind": "article", "url": "https://techcrunch.com/category/venture/feed/"},
+    {"name": "TechCrunch", "kind": "article", "url": "https://techcrunch.com/category/artificial-intelligence/feed/"},
+    {"name": "Crunchbase News", "kind": "article", "url": "https://news.crunchbase.com/feed/"}
+  ],
+  "models": {
+    "triage": "haiku",
+    "video": "sonnet",
+    "deep": "sonnet"
+  },
+  "effort": {
+    "video": "medium",
+    "deep": "medium"
+  },
+  "limits": {
+    "first_run_hours": 24,
+    "max_age_hours": 72,
+    "max_articles_per_run": 40,
+    "max_videos_per_run": 4,
+    "max_deep_per_run": 3,
+    "triage_batch_size": 12,
+    "article_chars": 5000,
+    "min_video_seconds": 180,
+    "feedback_examples": 30
+  },
+  "schedule": {
+    "allowed_hours": [0, 7]
+  }
+}

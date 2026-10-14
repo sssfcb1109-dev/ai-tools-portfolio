@@ -1,0 +1,5 @@
+uploads/
+output/
+work/
+.env
+__pycache__/
