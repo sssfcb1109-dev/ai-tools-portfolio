@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voice Memo Transcriber デモ</title>
+<style>
+:root{
+  --bg:#f6f6f4; --panel:#fff; --text:#1c1c1a; --muted:#6b6b66;
+  --border:#e2e2dd; --accent:#c15f3c; --accent-soft:#fdf1ec;
+  --ok:#2f7a52; --err:#b3413a; --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#17171a; --panel:#212125; --text:#ececea; --muted:#9a9a95;
+         --border:#33333a; --accent:#e08762; --accent-soft:#2c211d; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  line-height:1.7;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 80px}
+h1{font-size:1.35rem;margin:0 0 4px;letter-spacing:.01em}
+.sub{color:var(--muted);font-size:.85rem;margin:0 0 22px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
+
+/* ---- レイアウト（サイドバー + 本体） ---- */
+.app{display:flex;gap:26px;align-items:flex-start}
+.side{width:212px;flex:none;position:sticky;top:20px}
+.main{flex:1;min-width:0}
+
+.sidehead{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:0 4px}
+.sidehead h2{font-size:.76rem;margin:0;flex:1;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;
+  font-size:.86rem;cursor:pointer;border:1px solid transparent;user-select:none}
+.nav-item:hover{background:var(--panel)}
+.nav-item.active{background:var(--panel);border-color:var(--border);font-weight:600}
+.nav-item.drop-hot{border-color:var(--accent);background:var(--accent-soft)}
+.nav-item .label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-item .n{color:var(--muted);font-size:.76rem;flex:none}
+.nav-item .kill{color:var(--muted);font-size:.9rem;line-height:1;padding:0 2px;
+  border:0;background:none;cursor:pointer;visibility:hidden;flex:none}
+.nav-item:hover .kill{visibility:visible}
+.nav-item .kill:hover{color:var(--err)}
+.nav-sep{height:1px;background:var(--border);margin:8px 4px}
+#new-project{width:100%;text-align:left;color:var(--muted);border-style:dashed}
+
+/* ---- アップロード ---- */
+#drop{border:2px dashed var(--border);border-radius:var(--radius);background:var(--panel);
+  padding:34px 20px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:16px}
+#drop.hot{border-color:var(--accent);background:var(--accent-soft)}
+#drop .big{font-size:1.05rem;font-weight:600;margin-bottom:6px}
+#drop .small{color:var(--muted);font-size:.82rem}
+input[type=file]{display:none}
+
+details{margin-bottom:16px}
+summary{cursor:pointer;color:var(--muted);font-size:.85rem;padding:6px 2px;user-select:none}
+label.row{display:flex;align-items:flex-start;gap:9px;margin:12px 0;font-size:.88rem;cursor:pointer}
+label.row input{margin-top:5px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+label.row .hint{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
+textarea{width:100%;min-height:96px;background:var(--bg);color:var(--text);
+  border:1px solid var(--border);border-radius:10px;padding:11px;font-size:.88rem;
+  font-family:inherit;line-height:1.6;resize:vertical}
+.fieldlabel{font-size:.85rem;font-weight:600;margin:14px 0 6px}
+.fieldhint{color:var(--muted);font-size:.78rem;margin:0 0 8px}
+
+/* ---- 進行中のジョブ ---- */
+.job{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.job h3{margin:0 0 2px;font-size:.95rem;word-break:break-all}
+.job .meta{color:var(--muted);font-size:.78rem;margin-bottom:10px}
+.bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin:10px 0}
+.bar>span{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.bar.indet>span{width:35%;animation:slide 1.3s ease-in-out infinite}
+@keyframes slide{0%{margin-left:-35%}100%{margin-left:100%}}
+.status{font-size:.84rem;color:var(--muted)}
+.status.err{color:var(--err)}
+.status.ok{color:var(--ok)}
+.warn{background:var(--accent-soft);border:1px solid var(--border);border-radius:9px;
+  padding:9px 11px;font-size:.8rem;margin:10px 0}
+.result{white-space:pre-wrap;background:var(--bg);border:1px solid var(--border);
+  border-radius:10px;padding:14px;margin-top:12px;max-height:440px;overflow:auto;
+  font-size:.92rem;-webkit-user-select:text;user-select:text}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+button,a.btn{font:inherit;font-size:.85rem;padding:8px 15px;border-radius:9px;
+  border:1px solid var(--border);background:var(--panel);color:var(--text);
+  cursor:pointer;text-decoration:none;display:inline-block}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.quiet{padding:6px 12px;font-size:.8rem}
+button.danger{color:var(--err)}
+button:active{opacity:.7}
+select{font:inherit;font-size:.85rem;padding:7px 10px;border-radius:9px;
+  border:1px solid var(--border);background:var(--panel);color:var(--text)}
+#banner{display:none;background:var(--accent-soft);border:1px solid var(--accent);
+  border-radius:10px;padding:11px 13px;font-size:.84rem;margin-bottom:16px}
+#banner.err{border-color:var(--err);color:var(--err)}
+
+/* ---- 保存済みの文字起こし ---- */
+.hist{margin-top:30px;border-top:1px solid var(--border);padding-top:20px}
+.histhead{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.histhead h2{font-size:1rem;margin:0;flex:1}
+.histhead .count{color:var(--muted);font-size:.78rem}
+.hitem{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:10px;overflow:hidden}
+.hitem.dragging{opacity:.45}
+.hitem>.head{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer}
+.hitem>.head:hover{background:var(--accent-soft)}
+.hitem .grip{color:var(--muted);font-size:.8rem;flex:none;cursor:grab}
+.hitem .caret{color:var(--muted);font-size:.62rem;flex:none;transition:transform .15s}
+.hitem.open .caret{transform:rotate(90deg)}
+.hitem .title{flex:1;font-size:.92rem;font-weight:600;word-break:break-all}
+.hitem .chip{font-size:.72rem;color:var(--muted);border:1px solid var(--border);
+  border-radius:99px;padding:1px 9px;white-space:nowrap;flex:none}
+.hitem .when{color:var(--muted);font-size:.76rem;white-space:nowrap;flex:none}
+.hitem .body{display:none;padding:0 15px 15px}
+.hitem.open .body{display:block}
+.empty{color:var(--muted);font-size:.85rem;padding:4px 2px}
+
+@media (max-width:760px){
+  .app{flex-direction:column;gap:14px}
+  .side{width:100%;position:static}
+  .nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px}
+  .nav-item{flex:none;border-color:var(--border);background:var(--panel)}
+  .nav-item .kill{visibility:visible}
+  .nav-sep{display:none}
+  #new-project{width:auto}
+  .hitem .grip{display:none}
+  .hitem .when{display:none}
+}
+/* ---- demo only ---- */
+body{background:var(--bg)}
+.demo-bar{background:var(--accent-soft);border-bottom:1px solid var(--border);font-size:.82rem;
+  text-align:center;padding:8px 16px;line-height:1.6}
+.demo-bar a{color:var(--accent)}
+.sample{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.sample .what{flex:1;min-width:220px}
+.sample .what b{display:block;font-size:.92rem}
+.sample .what span{color:var(--muted);font-size:.8rem}
+.sample audio{width:100%;max-width:360px;height:38px}
+#drop.disabled{cursor:default;opacity:.55}
+#drop.disabled:hover{border-color:var(--border);background:var(--panel)}
+textarea[disabled],input[disabled]{opacity:.8;cursor:default}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.compare h4{margin:0 0 6px;font-size:.82rem;color:var(--muted);font-weight:600}
+.compare .result{margin-top:0;max-height:none}
+mark.del{background:rgba(179,65,58,.16);color:var(--err);text-decoration:line-through;border-radius:3px}
+mark.ins{background:rgba(47,122,82,.16);color:var(--ok);border-radius:3px}
+.legend{font-size:.78rem;color:var(--muted);margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 4px}
+.stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.stat .k{font-size:.74rem;color:var(--muted)}
+.stat .v{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
+.pipeline{font-size:.8rem;color:var(--muted);margin:0}
+.pipeline li{margin:2px 0}
+@media (max-width:760px){ .compare{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="demo-bar">デモ版：実物のツールの画面で、サンプル音声の処理を再現しています。この画面ではAIは動いていません。表示される文字起こしは、同じ音声を本物のツールで処理した実際の出力です。
+  ・<a href="../">Startup Radar のデモ</a>・<a href="https://github.com/sssfcb1109-dev/ai-tools-portfolio/tree/main/voice-transcribe">コード</a></div>
+<div class="wrap">
+  <h1>Voice Memo Transcriber</h1>
+  <p class="sub">Drop in an iPhone voice memo and get the Japanese text back.</p>
+
+  <div class="app">
+    <aside class="side">
+      <div class="sidehead"><h2>Library</h2></div>
+      <div class="nav" id="nav"></div>
+    </aside>
+
+    <div class="main">
+      <div class="panel sample">
+        <div class="what"><b>サンプル音声：架空の講義（約1分）</b>
+          <span>Windowsの読み上げ音声で作った、えー・あのー入りの講義です。再生して聞けます。</span></div>
+        <audio controls preload="none" src="sample-lecture.mp3"></audio>
+        <button class="primary" id="run">このサンプルで文字起こしする</button>
+      </div>
+
+      <div id="drop" class="disabled">
+        <div class="big">Choose an audio file</div>
+        <div class="small">デモ版では自分のファイルは選べません（上のサンプルを使ってください）</div>
+      </div>
+
+      <details id="opts" open>
+        <summary>Options (glossary and proofreading)</summary>
+        <div class="panel">
+          <div class="fieldlabel">Glossary</div>
+          <p class="fieldhint">List names, course titles and technical terms one per line. This cuts misrecognized words dramatically, and is remembered for next time.</p>
+          <textarea id="glossary" disabled></textarea>
+          <label class="row">
+            <input type="checkbox" checked disabled>
+            <span>Proofread with Claude
+              <span class="hint">Fixes homophone errors and punctuation. It never summarizes.</span></span>
+          </label>
+          <label class="row">
+            <input type="checkbox" disabled>
+            <span>Remove fillers
+              <span class="hint">Strips hesitations such as “えー” and “あのー”. Leave it off to keep speech exactly as spoken.</span></span>
+          </label>
+        </div>
+      </details>
+
+      <div id="jobs"></div>
+      <div id="report"></div>
+
+      <section class="hist">
+        <div class="histhead">
+          <h2>All transcripts</h2>
+          <span class="count" id="hist-count"></span>
+        </div>
+        <div id="hist-list"><div class="empty">No transcripts yet.</div></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const RESULT = {"model": "gemini-3.6-flash", "glossary": "PMF\nバーティカルAI", "chunks": 1, "duration": 63.499063, "raw": "えー、それでは今日の講義を始めます。\n\n前回は、スタートアップがプロダクトマーケットフィット、いわゆるPMFを見つけるまでの過程について話しました。今日は、えー、その続きとして、バーティカルAIと呼ばれる分野を取り上げます。\n\nバーティカルAIというのは、特定の業界の業務に特化したAIのことです。例えば、医療の診断を助けるAIや、法律事務所の契約書の確認を自動化するAIがこれに当たります。あの、汎用のAIと比べると、扱える範囲は狭いんですが、その分現場の細かい事情に合わせられるのが強みです。意外に思うかもしれませんが、こうした会社の創業者は、エンジニアよりも、その業界で長く働いていた人であることが多いんです。\n\n次回までに、身の回りの仕事の中で、AIに任せられそうな作業を1つ考えてきてください。今日はここまでです。", "polished": "えー、それでは今日の講義を始めます。\n\n前回は、スタートアップがプロダクトマーケットフィット、いわゆるPMFを見つけるまでの過程について話しました。今日は、えー、その続きとして、バーティカルAIと呼ばれる分野を取り上げます。\n\nバーティカルAIというのは、特定の業界の業務に特化したAIのことです。例えば、医療の診断を助けるAIや、法律事務所の契約書の確認を自動化するAIがこれに当たります。あの、汎用のAIと比べると、扱える範囲は狭いんですが、その分現場の細かい事情に合わせられるのが強みです。意外に思うかもしれませんが、こうした会社の創業者は、エンジニアよりも、その業界で長く働いていた人であることが多いんです。\n\n次回までに、身の回りの仕事の中で、AIに任せられそうな作業を1つ考えてきてください。今日はここまでです。", "sec": {"split": 0.5, "transcribe": 202.1, "polish": 10.9}, "when": "2026/10/15 00:14"};
+const SCRIPT = "えー、それでは今日の講義を始めます。前回は、スタートアップがプロダクトマーケットフィット、いわゆるPMFを見つけるまでの過程について話しました。\n今日は、えー、その続きとして、バーティカルAIと呼ばれる分野を取り上げます。\nバーティカルAIというのは、特定の業界の業務に特化したAIのことです。たとえば、医療の診断を助けるAIや、法律事務所の契約書の確認を自動化するAIがこれにあたります。\nあのー、汎用のAIと比べると、扱える範囲は狭いんですが、そのぶん現場の細かい事情に合わせられるのが強みです。\n意外に思うかもしれませんが、こうした会社の創業者は、エンジニアよりも、その業界で長く働いていた人であることが多いんです。\n次回までに、身の回りの仕事の中で、AIに任せられそうな作業を一つ考えてきてください。今日はここまでです。";
+const FILE = {filename: 'sample-lecture.m4a', size: 381561};
+
+const jobsEl = document.getElementById('jobs');
+const reportEl = document.getElementById('report');
+document.getElementById('glossary').value = RESULT.glossary;
+
+function esc(s) {
+  return (s || '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+}
+
+function renderNav(n) {
+  document.getElementById('nav').innerHTML =
+    '<div class="nav-item active"><span class="label">All transcripts</span><span class="n">' + n + '</span></div>' +
+    '<div class="nav-item"><span class="label">Unfiled</span><span class="n">' + n + '</span></div>';
+}
+renderNav(0);
+
+/* render() is the real tool's job card, unchanged except the download link */
+const LABEL = {
+  uploading: 'Uploading', queued: 'Queued', splitting: 'Analyzing',
+  transcribing: 'Transcribing', polishing: 'Proofreading', done: 'Done', error: 'Error'
+};
+function render(id, job) {
+  let el = document.getElementById('job-' + id);
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'job';
+    el.id = 'job-' + id;
+    jobsEl.prepend(el);
+  }
+  const mb = (job.size / 1048576).toFixed(1);
+  const running = ['done', 'error'].indexOf(job.status) === -1;
+  const pct = job.total_chunks ? Math.round((job.done_chunks / job.total_chunks) * 100) : 0;
+  const indet = running && (!job.total_chunks || job.status !== 'transcribing');
+
+  let html = '<h3>' + esc(job.filename) + '</h3>' +
+    '<div class="meta">' + mb + ' MB · ' + (LABEL[job.status] || job.status) + '</div>';
+  if (running) {
+    html += '<div class="bar' + (indet ? ' indet' : '') + '"><span style="' +
+      (indet ? '' : 'width:' + pct + '%') + '"></span></div>';
+  }
+  const cls = job.status === 'error' ? ' err' : job.status === 'done' ? ' ok' : '';
+  html += '<div class="status' + cls + '">' + esc(job.message || '') + '</div>';
+  if (job.status === 'done') {
+    html += '<div class="meta" style="margin-top:8px">' + job.chars + ' characters</div>' +
+      '<div class="result" id="text-' + id + '">' + esc(job.text) + '</div>' +
+      '<div class="actions"><button class="primary" data-copy="' + id + '">Copy</button></div>';
+  }
+  el.innerHTML = html;
+}
+
+/* The same status sequence the real server reports, sped up for the demo. */
+const STEPS = [
+  [0,    {status: 'uploading', message: 'Uploading…'}],
+  [700,  {status: 'queued', message: 'Waiting in queue…'}],
+  [1200, {status: 'splitting', message: 'Analyzing the audio…'}],
+  [2200, {status: 'splitting', total_chunks: RESULT.chunks, done_chunks: 0,
+          message: 'Split into ' + RESULT.chunks + ' part(s). Starting transcription…'}],
+  [2900, {status: 'transcribing', total_chunks: RESULT.chunks, done_chunks: 0,
+          message: 'Transcribing… (part 1 of ' + RESULT.chunks + ')'}],
+  [5200, {status: 'polishing', total_chunks: RESULT.chunks, done_chunks: RESULT.chunks,
+          message: 'Claude is proofreading…'}],
+  [6800, {status: 'done', text: RESULT.polished, chars: RESULT.polished.length, message: 'Done.'}],
+];
+
+let running = false;
+document.getElementById('run').addEventListener('click', () => {
+  if (running) return;
+  running = true;
+  const id = 'demo';
+  const old = document.getElementById('job-' + id);
+  if (old) old.remove();
+  reportEl.innerHTML = '';
+  STEPS.forEach(([t, s]) => setTimeout(() => {
+    render(id, {...FILE, total_chunks: 0, done_chunks: 0, ...s});
+    if (s.status === 'done') { running = false; showReport(); addHistory(); }
+  }, t));
+});
+
+jobsEl.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-copy]');
+  if (!btn) return;
+  const text = document.getElementById('text-' + btn.dataset.copy).innerText;
+  const done = () => { btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 1500); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, done);
+  else done();
+});
+
+function addHistory() {
+  renderNav(1);
+  document.getElementById('hist-count').textContent = '1 item';
+  document.getElementById('hist-list').innerHTML =
+    '<div class="hitem"><div class="head"><span class="caret">&#9654;</span>' +
+    '<span class="title">sample-lecture</span><span class="when">' + RESULT.when + '</span></div></div>';
+}
+
+/* ---- 原稿との比較（文字単位の差分） ---- */
+function diff(a, b) {
+  const n = a.length, m = b.length;
+  const dp = Array.from({length: n + 1}, () => new Uint16Array(m + 1));
+  for (let i = n - 1; i >= 0; i--)
+    for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const out = [];
+  let i = 0, j = 0;
+  const push = (type, ch) => {
+    const last = out[out.length - 1];
+    if (last && last.type === type) last.text += ch; else out.push({type, text: ch});
+  };
+  while (i < n && j < m) {
+    if (a[i] === b[j]) { push('same', a[i]); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) push('del', a[i++]);
+    else push('ins', b[j++]);
+  }
+  while (i < n) push('del', a[i++]);
+  while (j < m) push('ins', b[j++]);
+  return out;
+}
+
+function showReport() {
+  // 改行と句読点の位置の違いは比べない（読みやすさのために整形されるため）
+  const norm = s => s.replace(/\s+/g, '');
+  const parts = diff(norm(SCRIPT), norm(RESULT.polished));
+  const left = parts.filter(p => p.type !== 'ins').map(p =>
+    p.type === 'del' ? '<mark class="del">' + esc(p.text) + '</mark>' : esc(p.text)).join('');
+  const right = parts.filter(p => p.type !== 'del').map(p =>
+    p.type === 'ins' ? '<mark class="ins">' + esc(p.text) + '</mark>' : esc(p.text)).join('');
+  const total = Math.round(RESULT.sec.split + RESULT.sec.transcribe + RESULT.sec.polish);
+  reportEl.innerHTML =
+    '<div class="panel">' +
+    '<div class="fieldlabel" style="margin-top:0">読み上げた原稿と、文字起こしの結果の比較</div>' +
+    '<p class="fieldhint">違いは5か所でした。4か所は漢字とかなの表記の違い（「たとえば→例えば」「一つ→1つ」など）で、残る1か所はフィラーの「あのー」が「あの」と短く書かれたものです。単語の聞き間違いはありませんでした。改行の位置は比べていません。</p>' +
+    '<div class="compare"><div><h4>読み上げた原稿</h4><div class="result">' + left + '</div></div>' +
+    '<div><h4>文字起こしの結果</h4><div class="result">' + right + '</div></div></div>' +
+    '<div class="legend"><mark class="del">赤</mark> 原稿にだけある文字　<mark class="ins">緑</mark> 結果にだけある文字</div>' +
+    '<div class="stats">' +
+      '<div class="stat"><div class="k">音声の長さ</div><div class="v">' + Math.round(RESULT.duration) + '秒</div></div>' +
+      '<div class="stat"><div class="k">実際の処理時間</div><div class="v">約' + Math.round(total / 60 * 10) / 10 + '分</div></div>' +
+      '<div class="stat"><div class="k">文字起こしモデル</div><div class="v" style="font-size:.95rem">' + esc(RESULT.model) + '</div></div>' +
+    '</div>' +
+    '<ol class="pipeline">' +
+      '<li>ffmpeg で16kHzモノラルにそろえ、長い録音は無音の位置で約10分ごとに分ける（この音声は1パート）</li>' +
+      '<li>Gemini で文字起こし。用語集（PMF、バーティカルAI）を指示に入れて、固有名詞の表記をそろえる</li>' +
+      '<li>Claude で誤変換と句読点だけを直す。今回は直す箇所がなく、Gemini の出力がそのまま残った</li>' +
+    '</ol>' +
+    '<p class="fieldhint" style="margin-top:8px">デモでは数秒に縮めていますが、実際の処理には約' + Math.round(total / 60 * 10) / 10 + '分かかりました（無料枠の混雑で待たされた時間を含みます）。</p>' +
+    '</div>';
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 # ボイスメモ文字起こし
 
+**デモ（サンプル音声の実際の処理結果、閲覧のみ）**: <https://sssfcb1109-dev.github.io/ai-tools-portfolio/voice-demo/>
+
 iPhone のボイスメモを放り込むと、日本語のテキストが返ってくるツール。
 PC のブラウザからも、同じ Wi-Fi にいる iPhone の Safari からも、同じ画面が使える。
 

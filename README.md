@@ -6,7 +6,7 @@ UCLAの学生です。起業の検討と日々の勉強のために、Claude Cod
 | ツール | 一言で | デモ |
 |---|---|---|
 | [Startup Radar](startup-radar/) | 海外のスタートアップ情報を毎朝、日本語で「自分の事業との関連度」順に並べる | [デモを見る](https://sssfcb1109-dev.github.io/ai-tools-portfolio/) |
-| [ボイスメモ文字起こし](voice-transcribe/) | iPhone の録音を放り込むと、校正済みの日本語テキストが返ってくる | 実行には API キーが必要なため、コードと説明のみ |
+| [ボイスメモ文字起こし](voice-transcribe/) | iPhone の録音を放り込むと、校正済みの日本語テキストが返ってくる | [デモを見る](https://sssfcb1109-dev.github.io/ai-tools-portfolio/voice-demo/) |
 
 ---
 
@@ -43,6 +43,7 @@ UCLAの学生です。起業の検討と日々の勉強のために、Claude Cod
 
 **結果**
 - 30秒のテスト音声で、原稿と完全一致した（同音異義語もすべて正解、5.4秒）
+- 約1分のサンプル講義でも単語の聞き間違いは0件（[デモで原稿と結果を比較できます](https://sssfcb1109-dev.github.io/ai-tools-portfolio/voice-demo/)）
 - 24分の音声が3パートに分割され、分割点はすべて無音の中央に来た
 - 実際に、1時間を超える録音の文字起こしに日常的に使っている
 
